@@ -65,8 +65,8 @@ local function GetEnt(ply, trace)
     return ent
 end
 
-local function IsActionValid(ent, check_ent_cel)
-    if check_ent_cel and not ent.cel or
+local function IsActionValid(ent, checkCel)
+    if checkCel and not ent.cel or
        ent:IsPlayer() and GetConVar("enable_celshading_on_players"):GetInt() == 0 or
        not IsValid(ent) or not ent:IsValid() then
 
@@ -174,7 +174,7 @@ function TOOL:RightClick(trace)
     local ply = self:GetOwner()
     local ent = GetEnt(ply, trace)
 
-    if not IsActionValid(ent) then 
+    if not IsActionValid(ent, true) then 
         return false
     end
 
@@ -238,7 +238,7 @@ end
 function TOOL:Reload(trace)
     local ent = GetEnt(self:GetOwner(), trace)
 
-    if not IsActionValid(ent) then 
+    if not IsActionValid(ent, true) then 
         return false
     end
 
