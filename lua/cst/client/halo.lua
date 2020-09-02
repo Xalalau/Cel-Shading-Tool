@@ -67,7 +67,7 @@ function CST:SetGMod12Halo(ent)
         addsizefromlayer2onlayer1 = ent.cel.Layer2.Size / 2 + 1
     end
 
-    self:SetGMod12HaloAux(ent, 1 + ent.cel.Layer1.Size / 2 + addsizefromlayer2onlayer1 + shake / 15, ent.cel.Layer1.Color)
+    self:SetGMod12HaloAux(ent, ent.cel.Layer1.Size / 2 + addsizefromlayer2onlayer1 + shake / 15, ent.cel.Layer1.Color)
 
     if ent.cel.Layers == 1 then
         if ent.cel.SingleShake == 0 then
@@ -79,9 +79,10 @@ function CST:SetGMod12Halo(ent)
 end
 
 -- GMod 13 halos (heavy / works / admins)
-function CST:SetGMod13Halo(ent)
-    local size = ent.cel.Size * 5 + math.Rand(0, ent.cel.Shake)
-    halo.Add(ent, ent.cel.Color, size, size, ent.cel.Passes, ent.cel.Additive, ent.cel.ThroughWalls)
+function CST:SetGMod13Halo(entTable)
+    local size = entTable[1].cel.Size * 5 + math.Rand(0, entTable[1].cel.Shake)
+
+    halo.Add(entTable, entTable[1].cel.Color, size, size, entTable[1].cel.Passes, entTable[1].cel.Additive, entTable[1].cel.ThroughWalls)
 end
 
 function CST:DrawEffects()
@@ -95,14 +96,15 @@ function CST:DrawEffects()
                 elseif v[1].cel.Mode == "2" then
                     CST:SetGMod12Halo(v[1])
                 elseif v[1].cel.Mode == "3" then
-                    CST:SetGMod13Halo(v[1])
+                    CST:SetGMod13Halo(v)
                 end
             end
         end
     end
 end
 
--- https://facepunch.com/showthread.php?t=1337232
+-- OLD https://facepunch.com/showthread.php?t=1337232
+-- https://wiki.facepunch.com/gmod/GM:PreDrawHalos
 hook.Add("PostDrawOpaqueRenderables", "PlayerBorders", function()
     CST:DrawEffects()
 end)
