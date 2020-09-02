@@ -70,10 +70,10 @@ local function IsActionValid(ent, check_ent_cel)
        ent:IsPlayer() and GetConVar("enable_celshading_on_players"):GetInt() == 0 or
        not IsValid(ent) or not ent:IsValid() then
 
-        return true
+        return false
     end
 
-    return false
+    return true
 end
 
 function TOOL:LeftClick(trace)
