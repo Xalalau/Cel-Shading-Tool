@@ -7,7 +7,7 @@ util.AddNetworkString("net_remove_halo")
 function CST:SetHalo(ply, ent, h_data)
     ent.cel = h_data
 
-    timer.Create("DuplicatorFix", 0.1, 1, function()
+    timer.Simple(0.1, function()
         for _,v in pairs(player.GetAll()) do
             net.Start("net_set_halo")
                 net.WriteEntity(ent)

@@ -460,7 +460,7 @@ function CST:BuildPanel()
                 ApplyOnPlayers:SetValue(1)
                 -- EnableHalo13ForPlayers:
                 EnableHalo13ForPlayers:SetValue(0)
-                timer.Create("cel_Wait2_", 0.3, 1, function() -- Wait for the changes
+                timer.Simple(0.3, function() -- Wait for the changes
                     local r, g, b
                     -- HaloColor:
                     r = GetConVar("cel_h_colour_r"):GetInt()
@@ -489,7 +489,7 @@ function CST:BuildPanel()
                 end)
             end)
         end
-        
+
     local ToolVersion = vgui.Create("DLabel", panel1)
         ToolVersion:SetPos(455, 245)
         ToolVersion:SetSize(30, 25)
