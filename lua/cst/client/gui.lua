@@ -65,7 +65,7 @@ function CST:BuildPanel()
         TextureType:SetPos(10, 57)
         TextureType:SetSize(190, 25)
         TextureType:SetValue(CST.TEXTURES[GetConVar("cel_texture"):GetInt()])
-        for k,v in pairs(CST.TEXTURES) do
+        for k,v in ipairs(CST.TEXTURES) do
             TextureType:AddChoice(CST.TEXTURES[k], k)
         end
         TextureType.OnSelect = function(panel, index, value)

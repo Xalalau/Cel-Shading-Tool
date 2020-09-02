@@ -110,7 +110,7 @@ hook.Add("PostDrawOpaqueRenderables", "PlayerBorders", function()
 end)
 
 function CST:RemoveHalo(ent)
-    for k,v in pairs(self.ENTITIES) do
+    for k,v in ipairs(self.ENTITIES) do
         if table.HasValue(v, ent) then
             self.ENTITIES[k] = nil
         end
@@ -120,7 +120,7 @@ function CST:RemoveHalo(ent)
 end
 
 function CST:SetHalo(ent, h_data)
-    for k,v in pairs(self.ENTITIES) do
+    for k,v in ipairs(self.ENTITIES) do
         if table.HasValue(v, ent) then
             self.ENTITIES[k] = nil
         end

@@ -26,11 +26,11 @@ local function includeModules(dir, isClientModule)
 
     if not dirs then return end
 
-    for _, fdir in pairs(dirs) do
+    for _, fdir in ipairs(dirs) do
         includeModules(dir .. fdir .. "/", isClientModule)
     end
 
-    for k,v in pairs(files) do
+    for k,v in ipairs(files) do
         if SERVER and isClientModule then
             AddCSLuaFile(dir .. v)
         else
@@ -53,7 +53,7 @@ if SERVER then
                 CST:InitPlayer(ply)
 
                 if table.Count(CST.ENTITIES) > 0 then
-                    for _,v in pairs(CST.ENTITIES) do
+                    for _,v in ipairs(CST.ENTITIES) do
                         net.Start("net_set_halo")
                             net.WriteEntity(v[1])
                             net.WriteTable(v[1].cel)

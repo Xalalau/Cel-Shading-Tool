@@ -183,7 +183,7 @@ function TOOL:RightClick(trace)
     local mat = ent:GetMaterial()
 
     local texture_enabled = 0
-    for k,v in pairs(CST.TEXTURES) do
+    for k,v in ipairs(CST.TEXTURES) do
         if mat == v then
             texture_enabled = 1
 
