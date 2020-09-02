@@ -85,11 +85,12 @@ function CST:SetGMod13Halo(entTable)
     halo.Add(entTable, entTable[1].cel.Color, size, size, entTable[1].cel.Passes, entTable[1].cel.Additive, entTable[1].cel.ThroughWalls)
 end
 
-function CST:DrawEffects()
-    if table.Count(self.ENTITIES) > 0 then
-        for k,v in pairs(self.ENTITIES) do
+-- Start sobel and GMod 12 halos
+hook.Add("PostDrawOpaqueRenderables", "PlayerBorders", function()
+    if table.Count(CST.ENTITIES) > 0 then
+        for k,v in ipairs(CST.ENTITIES) do
             if not IsValid(v[1]) or not v[1]:IsValid() then
-                self.ENTITIES[k] = nil
+                CST.ENTITIES[k] = nil
             else
                 if v[1].cel.Mode == "1" then
                     CST:SetPPeffect(v[1])
@@ -101,12 +102,19 @@ function CST:DrawEffects()
             end
         end
     end
-end
+end)
 
--- OLD https://facepunch.com/showthread.php?t=1337232
--- https://wiki.facepunch.com/gmod/GM:PreDrawHalos
-hook.Add("PostDrawOpaqueRenderables", "PlayerBorders", function()
-    CST:DrawEffects()
+-- Start GMod 13 halos
+hook.Add("PreDrawHalos", "PlayerBorders", function()
+    if table.Count(CST.ENTITIES) > 0 then
+        for k,v in ipairs(CST.ENTITIES) do
+            if not IsValid(v[1]) or not v[1]:IsValid() then
+                if v[1].cel.Mode == "3" then
+                    CST:SetGMod13Halo(v)
+                end
+            end
+        end
+    end
 end)
 
 function CST:RemoveHalo(ent)
