@@ -3,7 +3,7 @@ net.Receive("net_set_halo", function()
 end)
 
 net.Receive("net_remove_halo", function()
-    CST:RemoveHalo()
+    CST:RemoveHalo(net.ReadEntity())
 end)
 
 -- Sobel PP effect (light / works / players)
@@ -107,9 +107,7 @@ hook.Add("PostDrawOpaqueRenderables", "PlayerBorders", function()
     CST:DrawEffects()
 end)
 
-function CST:RemoveHalo()
-    local ent = net.ReadEntity()
-
+function CST:RemoveHalo(ent)
     for k,v in pairs(self.ENTITIES) do
         if table.HasValue(v, ent) then
             self.ENTITIES[k] = nil
