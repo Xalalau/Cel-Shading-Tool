@@ -10,12 +10,13 @@ function CST:SetHalo(ply, ent, h_data)
     timer.Create("DuplicatorFix", 0.1, 1, function()
         for _,v in pairs(player.GetAll()) do
             net.Start("net_set_halo")
-            net.WriteEntity(ent)
-            net.WriteTable(h_data)
+                net.WriteEntity(ent)
+                net.WriteTable(h_data)
             net.Send(v)
         end
 
         table.insert(self.ENTITIES, { ent })
+
         duplicator.StoreEntityModifier(ent, "Cel_Halo", h_data)
     end)
 end
@@ -25,14 +26,14 @@ function CST:RemoveHalo(ent)
     ent.cel = nil
 
     for k,v in pairs(self.ENTITIES) do
-        if (table.HasValue(v, ent)) then
+        if table.HasValue(v, ent) then
             self.ENTITIES[k] = nil
         end
     end
 
     for _,v in pairs(player.GetAll()) do
         net.Start("net_remove_halo")
-        net.WriteEntity(ent)
+            net.WriteEntity(ent)
         net.Send(v)
     end
 

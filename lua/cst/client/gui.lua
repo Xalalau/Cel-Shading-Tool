@@ -89,6 +89,7 @@ function CST:BuildPanel()
         TextureColor:SetColor(Color(r, g, b))
         TextureColor.ValueChanged = function()
             local ChosenColor = TextureColor:GetColor()
+
             RunConsoleCommand("cel_colour_r", tostring(ChosenColor.r))
             RunConsoleCommand("cel_colour_g", tostring(ChosenColor.g))
             RunConsoleCommand("cel_colour_b", tostring(ChosenColor.b))
@@ -103,7 +104,8 @@ function CST:BuildPanel()
         TextureMimic:SetVisible(false)
         function TextureMimic:OnChange(val)
             local r, g, b
-            if (val) then
+
+            if val then
                 TextureColor:SetVisible(false)
                 TextureColorLabel:SetVisible(false)
             else
@@ -176,11 +178,7 @@ function CST:BuildPanel()
         Halo13Aditive:SetText("Aditive")
         Halo13Aditive:SetValue(GetConVar("cel_h_13_additive"):GetInt())
         function Halo13Aditive:OnChange(val)
-            local aux = 0
-            if (val) then
-                aux = 1
-            end
-            RunConsoleCommand("cel_h_13_additive", tostring(aux))
+            RunConsoleCommand("cel_h_13_additive", val and "1" or "0")
         end
 
     local Halo13ThroughWalls = vgui.Create("DCheckBoxLabel", panel2)
@@ -188,11 +186,7 @@ function CST:BuildPanel()
         Halo13ThroughWalls:SetText("Render Through The Map")
         Halo13ThroughWalls:SetValue(GetConVar("cel_h_13_throughwalls"):GetInt())
         function Halo13ThroughWalls:OnChange(val)
-            local aux = 0
-            if (val) then
-                aux = 1
-            end
-            RunConsoleCommand("cel_h_13_throughwalls", tostring(aux))
+            RunConsoleCommand("cel_h_13_throughwalls", val and "1" or "0")
         end
 
     local HaloColorLabel = vgui.Create("DLabel", panel2)
@@ -200,19 +194,19 @@ function CST:BuildPanel()
         HaloColorLabel:SetText("Color:")
 
     local HaloColor = vgui.Create("DColorMixer", panel2)
-        local r, g, b
+        local r = GetConVar("cel_h_colour_r"):GetInt()
+        local g = GetConVar("cel_h_colour_g"):GetInt()
+        local b = GetConVar("cel_h_colour_b"):GetInt()
         HaloColor:SetSize(266, 230)
         HaloColor:SetPos(210, 30)
         HaloColor:SetPalette(true)
         HaloColor:SetAlphaBar(false)
         HaloColor:SetWangs(true)
-        r = GetConVar("cel_h_colour_r"):GetInt()
-        g = GetConVar("cel_h_colour_g"):GetInt()
-        b = GetConVar("cel_h_colour_b"):GetInt()
         HaloColor:SetColor(Color(r, g, b))
         HaloColor.ValueChanged = function()
             local ChosenColor = HaloColor:GetColor()
-            if (GetConVar("cel_h_12_selected_halo"):GetInt() == 1 || not GetConVar("cel_h_12_two_layers"):GetInt()) then
+
+            if GetConVar("cel_h_12_selected_halo"):GetInt() == 1 or not GetConVar("cel_h_12_two_layers"):GetInt() then
                 RunConsoleCommand("cel_h_colour_r", tostring(ChosenColor.r))
                 RunConsoleCommand("cel_h_colour_g", tostring(ChosenColor.g))
                 RunConsoleCommand("cel_h_colour_b", tostring(ChosenColor.b))
@@ -227,41 +221,39 @@ function CST:BuildPanel()
         Halo12Choose2Label:SetPos(35, 192)
         Halo12Choose2Label:SetText("Select:")
 
-    local function Halo12Choose2Options (choice)
-        if (choice == 1) then
+    local function Halo12Choose2Options(choice)
+        if choice == 1 then
             return "Layer 1"
-        elseif (choice == 2) then
+        elseif choice == 2 then
             return "Layer 2"
         end
     end
 
     local Halo12Choose2 = vgui.Create("DComboBox", panel2)
-        local r, g, b
         Halo12Choose2:SetPos(75, 190)
         Halo12Choose2:SetSize(123, 25)
-        local choice = GetConVar("cel_h_12_selected_halo"):GetInt()
-        Halo12Choose2:SetValue(Halo12Choose2Options(choice))
+        Halo12Choose2:SetValue(Halo12Choose2Options(GetConVar("cel_h_12_selected_halo"):GetInt()))
         Halo12Choose2:AddChoice("Layer 1", 1)
         Halo12Choose2:AddChoice("Layer 2", 2)
         Halo12Choose2.OnSelect = function(panel, value)
             RunConsoleCommand("cel_h_12_selected_halo", tostring(value))
-            if (value == 1 || not GetConVar("cel_h_12_two_layers"):GetInt()) then
+            if value == 1 or not GetConVar("cel_h_12_two_layers"):GetInt() then
+                local r = GetConVar("cel_h_colour_r"):GetInt()
+                local g = GetConVar("cel_h_colour_g"):GetInt()
+                local b = GetConVar("cel_h_colour_b"):GetInt()
                 HaloSize:SetConVar("cel_h_size")
                 HaloShake:SetConVar("cel_h_shake")
-                r = GetConVar("cel_h_colour_r"):GetInt()
-                g = GetConVar("cel_h_colour_g"):GetInt()
-                b = GetConVar("cel_h_colour_b"):GetInt()
                 HaloColor:SetColor(Color(r, g, b))
             else
+                local r = GetConVar("cel_h_12_colour_r_2"):GetInt()
+                local g = GetConVar("cel_h_12_colour_g_2"):GetInt()
+                local b = GetConVar("cel_h_12_colour_b_2"):GetInt()
                 HaloSize:SetConVar("cel_h_12_size_2")
                 if (GetConVar("cel_h_12_singleshake"):GetInt() == 1) then
                     HaloShake:SetConVar("cel_h_shake")
                 else
                     HaloShake:SetConVar("cel_h_12_shake_2")
                 end
-                r = GetConVar("cel_h_12_colour_r_2"):GetInt()
-                g = GetConVar("cel_h_12_colour_g_2"):GetInt()
-                b = GetConVar("cel_h_12_colour_b_2"):GetInt()
                 HaloColor:SetColor(Color(r, g, b))
             end
         end
@@ -272,12 +264,14 @@ function CST:BuildPanel()
         Halo12SingleShake:SetValue(GetConVar("cel_h_12_singleshake"):GetInt())
         function Halo12SingleShake:OnChange(val)
             local aux = 0
-            if (val) then
+
+            if val then
                 aux = 1
                 HaloShake:SetConVar("cel_h_shake")
             else
                 HaloShake:SetConVar("cel_h_12_shake_2")
             end
+
             RunConsoleCommand("cel_h_12_singleshake", tostring(aux))
         end
 
@@ -286,9 +280,7 @@ function CST:BuildPanel()
         Halo12ExtraLayer:SetText("Use Two Layers")
         Halo12ExtraLayer:SetValue(GetConVar("cel_h_12_two_layers"):GetInt())
         function Halo12ExtraLayer:OnChange(val)
-            local aux = 0
-            if (val) then
-                aux = 1
+            if val then
                 if (GetConVar("cel_h_mode"):GetInt() == 2) then -- Used for hiding these options when reseting everything
                     Halo12Choose2Label:SetVisible(true)
                     Halo12Choose2:SetVisible(true)
@@ -299,11 +291,13 @@ function CST:BuildPanel()
                 Halo12Choose2:SetVisible(false)
                 Halo12SingleShake:SetVisible(false)
             end
-            RunConsoleCommand("cel_h_12_two_layers", tostring(aux))
+
+            RunConsoleCommand("cel_h_12_two_layers", val and "1" or "0")
         end
 
+    -- This is an old, shitty piece of code that I don't want to fix.
     local function ShowOptions(mode)
-        if (mode == 1) then
+        if mode == 1 then
             SobelLabel:SetVisible(true)
             Sobel:SetVisible(true)
             HaloSizeLabel:SetVisible(false)
@@ -321,7 +315,7 @@ function CST:BuildPanel()
             Halo12Choose2:SetVisible(false)
             Halo12SingleShake:SetVisible(false)
             TextureMimic:SetVisible(false)
-        elseif (mode == 2) then
+        elseif mode == 2 then
             SobelLabel:SetVisible(false)
             Sobel:SetVisible(false)
             HaloSizeLabel:SetVisible(true)
@@ -335,13 +329,13 @@ function CST:BuildPanel()
             HaloColorLabel:SetVisible(true)
             HaloColor:SetVisible(true)
             Halo12ExtraLayer:SetVisible(true)
-            if (GetConVar("cel_h_12_two_layers"):GetInt() == 1) then
+            if GetConVar("cel_h_12_two_layers"):GetInt() == 1 then
                 Halo12Choose2Label:SetVisible(true)
                 Halo12Choose2:SetVisible(true)
                 Halo12SingleShake:SetVisible(true)
             end
             TextureMimic:SetVisible(true)
-        elseif (mode == 3) then
+        elseif mode == 3 then
             SobelLabel:SetVisible(false)
             Sobel:SetVisible(false)
             HaloSizeLabel:SetVisible(true)
@@ -362,12 +356,12 @@ function CST:BuildPanel()
         end
     end
 
-    local function HaloChooseOptions (choice)
-        if (choice == 1) then
+    local function HaloChooseOptions(choice)
+        if choice == 1 then
             return "Sobel"
-        elseif (choice == 2) then
+        elseif choice == 2 then
             return "GMod 12 Halo"
-        elseif (choice == 3) then
+        elseif choice == 3 then
             return "GMod 13 Halo"
         end
     end
@@ -380,7 +374,7 @@ function CST:BuildPanel()
         ShowOptions(choice)
         HaloChoose:AddChoice("Sobel", 1)
         HaloChoose:AddChoice("GMod 12 Halo", 2)
-        if (LocalPlayer():IsAdmin() or LocalPlayer():IsSuperAdmin()) or (GetConVar("enable_gm13_for_players"):GetInt() == 1) then
+        if LocalPlayer():IsAdmin() or (GetConVar("enable_gm13_for_players"):GetInt() == 1 then
             HaloChoose:AddChoice("GMod 13 Halo", 3)
         end
         HaloChoose.OnSelect = function(panel, value)
@@ -403,7 +397,7 @@ function CST:BuildPanel()
         ApplyOnYourself:SetValue(GetConVar("cel_apply_yourself"):GetInt())
         function ApplyOnYourself:OnChange(val)
             net.Start("net_enable_celshading_yourself")
-            net.WriteBool(aux and true or false)
+                net.WriteBool(aux and true or false)
             net.SendToServer()
         end
 
@@ -413,11 +407,7 @@ function CST:BuildPanel()
         ApplyOnPlayers:SetText("Enable Rendering On Playermodels")
         ApplyOnPlayers:SetValue(GetConVar("enable_celshading_on_players"):GetInt())
         function ApplyOnPlayers:OnChange(val)
-            local aux = 0
-            if (val) then
-                aux = 1
-            end
-            RunConsoleCommand("enable_celshading_on_players", tostring(aux))
+            RunConsoleCommand("enable_celshading_on_players", val and "1" or "0")
         end
 
     local EnableHalo13ForPlayers = vgui.Create("DCheckBoxLabel", panel1)
@@ -426,28 +416,23 @@ function CST:BuildPanel()
         EnableHalo13ForPlayers:SetText("Enable \"GMod 13 Halo\" Option On Clients Menus")
         EnableHalo13ForPlayers:SetValue(GetConVar("enable_gm13_for_players"):GetInt())
         function EnableHalo13ForPlayers:OnChange(val)
-            local aux = 0
-            if (val) then
-                aux = 1
-            end
-            RunConsoleCommand("enable_gm13_for_players", tostring(aux))
+            RunConsoleCommand("enable_gm13_for_players", val and "1" or "0")
         end
 
-    if ((LocalPlayer():IsAdmin() or LocalPlayer():IsSuperAdmin()) and not game.SinglePlayer()) then
+    if LocalPlayer():IsAdmin() and not game.SinglePlayer() then
         ApplyOnYourself:SetPos(155, 95)
         ApplyOnPlayers:SetVisible(true)
         EnableHalo13ForPlayers:SetVisible(true)
     end
 
     local ResetButton = vgui.Create("DButton", panel1)
-        local r, g, b
         ResetButton:SetPos(180, 220)
         ResetButton:SetText("Reset Options!")
         ResetButton:SetSize(120, 30)
         ResetButton.DoClick = function()
             HaloChoose:ChooseOption(HaloChooseOptions(1), 1)
             Halo12Choose2:ChooseOption(Halo12Choose2Options(1), 1)
-            timer.Create("cel_Wait_", 0.3, 1, function() -- Wait for the changes
+            timer.Simple(0.3, function() -- Wait for the changes
                 RunConsoleCommand("cel_h_colour_r", "255")
                 RunConsoleCommand("cel_h_colour_g", "0")
                 RunConsoleCommand("cel_h_colour_b", "0")
@@ -469,7 +454,6 @@ function CST:BuildPanel()
                 RunConsoleCommand("cel_h_12_colour_b_2", "0")
                 RunConsoleCommand("cel_apply_yourself", "0")
                 RunConsoleCommand("cel_texture_mimic_halo", "0")
-
                 -- ApplyOnYourself:
                 ApplyOnYourself:SetValue(0)
                 -- ApplyOnPlayers:
@@ -477,6 +461,7 @@ function CST:BuildPanel()
                 -- EnableHalo13ForPlayers:
                 EnableHalo13ForPlayers:SetValue(0)
                 timer.Create("cel_Wait2_", 0.3, 1, function() -- Wait for the changes
+                    local r, g, b
                     -- HaloColor:
                     r = GetConVar("cel_h_colour_r"):GetInt()
                     g = GetConVar("cel_h_colour_g"):GetInt()

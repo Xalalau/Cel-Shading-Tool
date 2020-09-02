@@ -50,14 +50,15 @@ end
 -- -------------
 
 local function GetEnt(ply, trace)
-    if (GetConVar("enable_celshading_on_players"):GetInt() == 1) and
-       (ply:GetInfo("cel_apply_yourself") == "1") then
+    if GetConVar("enable_celshading_on_players"):GetInt() == 1 and
+       ply:GetInfo("cel_apply_yourself") == "1" then
+
         return ply
     end
 
     local ent = trace.Entity
 
-    if (IsValid(ent.AttachedEntity)) then
+    if IsValid(ent.AttachedEntity) then
         ent = ent.AttachedEntity
     end
 
@@ -65,52 +66,50 @@ local function GetEnt(ply, trace)
 end
 
 local function IsActionValid(ent, check_ent_cel)
-    if (check_ent_cel) then
-        if (ent.cel == nil) then
-            return 1
-        end
-    end
-    if (!IsValid(ent)) then
-        return 1
-    end -- The entity is valid and isn't worldspawn
+    if check_ent_cel and not ent.cel or
+       ent:IsPlayer() and GetConVar("enable_celshading_on_players"):GetInt() == 0 or
+       not IsValid(ent) or
+       not ent:IsValid() then
 
-    if (ent:IsPlayer() and (GetConVar("enable_celshading_on_players"):GetInt() == 0)) then
-        return 1
+        return true
     end
-    
-    return 0
+
+    return false
 end
 
 function TOOL:LeftClick(trace)
     local ply = self:GetOwner()
     local ent = GetEnt(ply, trace)
-    local check = IsActionValid(ent)
 
-    if (check == 1) then 
+    if not IsActionValid(ent) then 
         return false
     end
     
-    if (CLIENT) then return true end
+    if CLIENT then return true end
 
     local mode = ply:GetInfo("cel_h_mode")
 
-    if (mode == "3" and not ply:IsAdmin() and ply:GetInfo("enable_gm13_for_players") == "0") then
+    if mode == "3" and not ply:IsAdmin() and ply:GetInfo("enable_gm13_for_players") == "0" then
         ply:PrintMessage(HUD_PRINTTALK, "GM 13 Halos are admin only.")
 
         return
     end
 
     local h_data
-    -- Halos and their color + Sobel
-    if (mode != "1") then
+
+    -- Sobel
+    if mode == "1" then
+        h_data = { SobelThershold = (ply:GetInfo("cel_sobel_thershold")), Mode = mode }
+    -- Halos
+    else
         local r = ply:GetInfo("cel_h_colour_r")
         local g = ply:GetInfo("cel_h_colour_g")
         local b = ply:GetInfo("cel_h_colour_b")            
         local size = ply:GetInfo("cel_h_size")
         local shake = ply:GetInfo("cel_h_shake")
-        if (mode == "2") then
-            size = size
-            shake = shake
+
+        -- GMod 12 halo
+        if mode == "2" then
             local layers = ply:GetInfo("cel_h_12_two_layers")
             local singleshake = ply:GetInfo("cel_h_12_singleshake")
             local r2 = ply:GetInfo("cel_h_12_colour_r_2")
@@ -118,23 +117,24 @@ function TOOL:LeftClick(trace)
             local b2 = ply:GetInfo("cel_h_12_colour_b_2")     
             local size2 = ply:GetInfo("cel_h_12_size_2")
             local shake2 = ply:GetInfo("cel_h_12_shake_2")
+
             h_data = {
                 Mode = mode, Layers = layers, SingleShake = singleshake,
                 Layer1 = { Color = Color(r, g, b, 255), Size = size, Shake = shake },
                 Layer2 = { Color = Color(r2, g2, b2, 255), Size = size2, Shake = shake2 },
             }
-        else
-            shake = shake
+
+        -- GMod 13 halo
+        elseif mode == "3" then
             local passes = ply:GetInfo("cel_h_13_passes")
             local additive = ply:GetInfo("cel_h_13_additive")
             local throughwalls = ply:GetInfo("cel_h_13_throughwalls")
+
             h_data = { Color = Color(r, g, b, 255), Size = size, Shake = shake, Mode = mode, Passes = passes, Additive = additive, ThroughWalls = throughwalls }
         end
-    else
-        h_data = { SobelThershold = (ply:GetInfo("cel_sobel_thershold")), Mode = mode }
     end
 
-    -- Texture and its Color
+    -- Texture and texture color
     local c_data, t_data
     if (ply:GetInfo("cel_apply_texture") == "1") then
         local r, g, b
@@ -151,14 +151,17 @@ function TOOL:LeftClick(trace)
         t_data = { MaterialOverride = CST.TEXTURES[tonumber(ply:GetInfo("cel_texture"))] }
     end
 
+    -- Set halo
     CST:SetHalo(nil, ent, h_data)
 
+    -- Set color
     if c_data and (table.Count(c_data) > 0) then
         CST:SetColor(nil, ent, c_data)
     else
         CST:RemoveColor(ent)
     end
 
+    -- Set texture
     if t_data and (table.Count(t_data) > 0) then
         CST:SetMaterial(nil, ent, t_data)
     else
@@ -171,13 +174,12 @@ end
 function TOOL:RightClick(trace)
     local ply = self:GetOwner()
     local ent = GetEnt(ply, trace)
-    local check = IsActionValid(ent, true)
 
-    if (check == 1) then 
+    if not IsActionValid(ent) then 
         return false
     end
 
-    if (CLIENT) then return true end
+    if CLIENT then return true end
 
     local mat = ent:GetMaterial()
 
@@ -236,13 +238,12 @@ end
 
 function TOOL:Reload(trace)
     local ent = GetEnt(self:GetOwner(), trace)
-    local check = IsActionValid(ent, true)
 
-    if (check == 1) then 
+    if not IsActionValid(ent) then 
         return false
     end
 
-    if (CLIENT) then return true end
+    if CLIENT then return true end
 
     CST:RemoveColor(ent)
     CST:RemoveHalo(ent)

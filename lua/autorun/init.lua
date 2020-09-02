@@ -52,17 +52,17 @@ if SERVER then
             if self == ply and not cmd:IsForced() then
                 CST:InitPlayer(ply)
 
-                if (table.Count(CST.ENTITIES) > 0) then
+                if table.Count(CST.ENTITIES) > 0 then
                     for _,v in pairs(CST.ENTITIES) do
                         net.Start("net_set_halo")
-                        net.WriteEntity(v[1])
-                        net.WriteTable(v[1].cel)
+                            net.WriteEntity(v[1])
+                            net.WriteTable(v[1].cel)
                         net.Send(ply)
                     end
  
                     net.Start("net_first_login_sync")
-                    net.WriteInt(GetConVar("enable_gm13_for_players"):GetInt(), 2)
-                    net.WriteInt(GetConVar("enable_celshading_on_players"):GetInt(), 2)
+                        net.WriteInt(GetConVar("enable_gm13_for_players"):GetInt(), 2)
+                        net.WriteInt(GetConVar("enable_celshading_on_players"):GetInt(), 2)
                     net.Send(ply)
                 end
 

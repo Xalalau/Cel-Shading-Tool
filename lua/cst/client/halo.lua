@@ -16,7 +16,7 @@ function CST:SetPPeffect(ent)
         render.SetStencilPassOperation(STENCILOPERATION_REPLACE)
         render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_ALWAYS)
         render.SetBlend(0)
-        if (ent[1].cel.Color) then
+        if ent[1].cel.Color then
             ent[1]:SetColor(ent[1].cel.Color)
         end
         ent[1]:DrawModel()
@@ -63,14 +63,14 @@ function CST:SetGMod12Halo(ent)
     local shake = math.Rand(0, ent[1].cel.Layer1.Shake)
 
     local addsizefromlayer2onlayer1 = 0
-    if (ent[1].cel.Layers == 1) then
+    if ent[1].cel.Layers == 1 then
         addsizefromlayer2onlayer1 = ent[1].cel.Layer2.Size / 2 + 1
     end
 
     self:SetGMod12HaloAux(ent, 1 + ent[1].cel.Layer1.Size / 2 + addsizefromlayer2onlayer1 + shake / 15, ent[1].cel.Layer1.Color)
 
-    if (ent[1].cel.Layers == 1) then
-        if (ent[1].cel.SingleShake == 0) then
+    if ent[1].cel.Layers == 1 then
+        if ent[1].cel.SingleShake == 0 then
             shake = math.Rand(0, ent[1].cel.Layer2.Shake)
         end
 
@@ -87,14 +87,14 @@ end
 function CST:DrawEffects()
     if table.Count(self.ENTITIES) > 0 then
         for index,ent in pairs(self.ENTITIES) do
-            if (!IsValid(ent[1])) then
-                self.ENTITIES[index] = nil  -- Clean the table
+            if not IsValid(ent[1]) then
+                self.ENTITIES[index] = nil
             else
-                if (ent[1].cel.Mode == "1") then
+                if ent[1].cel.Mode == "1" then
                     CST:SetPPeffect(ent)
-                elseif (ent[1].cel.Mode == "2") then
+                elseif ent[1].cel.Mode == "2" then
                     CST:SetGMod12Halo(ent)
-                elseif (ent[1].cel.Mode == "3") then
+                elseif ent[1].cel.Mode == "3" then
                     CST:SetGMod13Halo(ent)
                 end
             end
@@ -111,7 +111,7 @@ function CST:RemoveHalo()
     local ent = net.ReadEntity()
 
     for k,v in pairs(self.ENTITIES) do
-        if (table.HasValue(v, ent)) then
+        if table.HasValue(v, ent) then
             self.ENTITIES[k] = nil
         end
     end
@@ -121,7 +121,7 @@ end
 
 function CST:SetHalo(ent, h_data)
     for k,v in pairs(self.ENTITIES) do
-        if (table.HasValue(v, ent)) then
+        if table.HasValue(v, ent) then
             self.ENTITIES[k] = nil
         end
     end
