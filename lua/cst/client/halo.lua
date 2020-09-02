@@ -87,7 +87,7 @@ end
 function CST:DrawEffects()
     if table.Count(self.ENTITIES) > 0 then
         for k,v in pairs(self.ENTITIES) do
-            if not IsValid(v[1]) then
+            if not IsValid(v[1]) or not v[1]:IsValid() then
                 self.ENTITIES[k] = nil
             else
                 if v[1].cel.Mode == "1") then

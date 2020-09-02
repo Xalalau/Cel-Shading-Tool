@@ -58,7 +58,7 @@ local function GetEnt(ply, trace)
 
     local ent = trace.Entity
 
-    if IsValid(ent.AttachedEntity) then
+    if ent and IsValid(ent) and ent:IsValid() and ent.AttachedEntity and ent.AttachedEntity:IsValid() then
         ent = ent.AttachedEntity
     end
 
@@ -68,8 +68,7 @@ end
 local function IsActionValid(ent, check_ent_cel)
     if check_ent_cel and not ent.cel or
        ent:IsPlayer() and GetConVar("enable_celshading_on_players"):GetInt() == 0 or
-       not IsValid(ent) or
-       not ent:IsValid() then
+       not IsValid(ent) or not ent:IsValid() then
 
         return true
     end
