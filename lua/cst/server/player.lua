@@ -1,5 +1,4 @@
 util.AddNetworkString("net_enable_celshading_yourself")
-util.AddNetworkString("net_first_login_sync")
 util.AddNetworkString("net_init_player")
 
 net.Receive("net_enable_celshading_yourself", function(_, ply)

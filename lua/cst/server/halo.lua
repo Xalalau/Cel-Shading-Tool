@@ -1,6 +1,3 @@
-util.AddNetworkString("net_left_click_start")
-util.AddNetworkString("net_left_click_finish")
-util.AddNetworkString("net_right_click")
 util.AddNetworkString("net_set_halo")
 util.AddNetworkString("net_remove_halo")
 

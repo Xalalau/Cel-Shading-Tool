@@ -59,11 +59,6 @@ if SERVER then
                             net.WriteTable(v[1].cel)
                         net.Send(ply)
                     end
- 
-                    net.Start("net_first_login_sync")
-                        net.WriteInt(GetConVar("enable_gm13_for_players"):GetInt(), 2)
-                        net.WriteInt(GetConVar("enable_celshading_on_players"):GetInt(), 2)
-                    net.Send(ply)
                 end
 
                 hook.Remove("SetupMove", self)
