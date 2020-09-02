@@ -16,15 +16,15 @@ function CST:SetPPeffect(ent)
         render.SetStencilPassOperation(STENCILOPERATION_REPLACE)
         render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_ALWAYS)
         render.SetBlend(0)
-        if ent[1].cel.Color then
-            ent[1]:SetColor(ent[1].cel.Color)
+        if ent.cel.Color then
+            ent:SetColor(ent.cel.Color)
         end
-        ent[1]:DrawModel()
+        ent:DrawModel()
         render.SetBlend(1)
         render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_EQUAL)
         render.UpdateScreenEffectTexture();
-        self.SOBELMAT:SetFloat("$threshold", 0.15 - ent[1].cel.SobelThershold * 0.15)
-        ent[1]:DrawModel()
+        self.SOBELMAT:SetFloat("$threshold", 0.15 - ent.cel.SobelThershold * 0.15)
+        ent:DrawModel()
         render.SetMaterial(self.SOBELMAT);
         render.DrawScreenQuad();
     render.SetStencilEnable(false)
@@ -45,9 +45,9 @@ function CST:SetGMod12HaloAux(ent, scale, color)
         render.SetStencilPassOperation(STENCILOPERATION_REPLACE)
         render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_ALWAYS)
         render.SetBlend(0)
-        ent[1]:SetModelScale(scale, 0)
-        ent[1]:DrawModel()
-        ent[1]:SetModelScale(1,0)
+        ent:SetModelScale(scale, 0)
+        ent:DrawModel()
+        ent:SetModelScale(1,0)
         render.SetBlend(1)
         render.SetStencilPassOperation(STENCIL_KEEP)
         render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_EQUAL)
@@ -55,47 +55,47 @@ function CST:SetGMod12HaloAux(ent, scale, color)
             surface.SetDrawColor(color)
             surface.DrawRect(-ScrW(), -ScrH(), ScrW() * 2, ScrH() * 2)
         cam.End3D2D()
-        ent[1]:DrawModel()
+        ent:DrawModel()
     render.SetStencilEnable(false)
 end
 
 function CST:SetGMod12Halo(ent)
-    local shake = math.Rand(0, ent[1].cel.Layer1.Shake)
+    local shake = math.Rand(0, ent.cel.Layer1.Shake)
 
     local addsizefromlayer2onlayer1 = 0
-    if ent[1].cel.Layers == 1 then
-        addsizefromlayer2onlayer1 = ent[1].cel.Layer2.Size / 2 + 1
+    if ent.cel.Layers == 1 then
+        addsizefromlayer2onlayer1 = ent.cel.Layer2.Size / 2 + 1
     end
 
-    self:SetGMod12HaloAux(ent, 1 + ent[1].cel.Layer1.Size / 2 + addsizefromlayer2onlayer1 + shake / 15, ent[1].cel.Layer1.Color)
+    self:SetGMod12HaloAux(ent, 1 + ent.cel.Layer1.Size / 2 + addsizefromlayer2onlayer1 + shake / 15, ent.cel.Layer1.Color)
 
-    if ent[1].cel.Layers == 1 then
-        if ent[1].cel.SingleShake == 0 then
-            shake = math.Rand(0, ent[1].cel.Layer2.Shake)
+    if ent.cel.Layers == 1 then
+        if ent.cel.SingleShake == 0 then
+            shake = math.Rand(0, ent.cel.Layer2.Shake)
         end
 
-        self:SetGMod12HaloAux(ent, ent[1].cel.Layer2.Size / 2 + 1 + shake / 15, ent[1].cel.Layer2.Color)
+        self:SetGMod12HaloAux(ent, ent.cel.Layer2.Size / 2 + 1 + shake / 15, ent.cel.Layer2.Color)
     end
 end
 
 -- GMod 13 halos (heavy / works / admins)
 function CST:SetGMod13Halo(ent)
-    local size = ent[1].cel.Size * 5 + math.Rand(0, ent[1].cel.Shake)
-    halo.Add(ent, ent[1].cel.Color, size, size, ent[1].cel.Passes, ent[1].cel.Additive, ent[1].cel.ThroughWalls)
+    local size = ent.cel.Size * 5 + math.Rand(0, ent.cel.Shake)
+    halo.Add(ent, ent.cel.Color, size, size, ent.cel.Passes, ent.cel.Additive, ent.cel.ThroughWalls)
 end
 
 function CST:DrawEffects()
     if table.Count(self.ENTITIES) > 0 then
-        for index,ent in pairs(self.ENTITIES) do
-            if not IsValid(ent[1]) then
-                self.ENTITIES[index] = nil
+        for k,v in pairs(self.ENTITIES) do
+            if not IsValid(v[1]) then
+                self.ENTITIES[k] = nil
             else
-                if ent[1].cel.Mode == "1" then
-                    CST:SetPPeffect(ent)
-                elseif ent[1].cel.Mode == "2" then
-                    CST:SetGMod12Halo(ent)
-                elseif ent[1].cel.Mode == "3" then
-                    CST:SetGMod13Halo(ent)
+                if v[1].cel.Mode == "1") then
+                    CST:SetPPeffect(v[1])
+                elseif (v[1].cel.Mode == "2") then
+                    CST:SetGMod12Halo(v[1])
+                elseif (v[1].cel.Mode == "3") then
+                    CST:SetGMod13Halo(v[1])
                 end
             end
         end
