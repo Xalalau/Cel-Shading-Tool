@@ -374,7 +374,7 @@ function CST:BuildPanel()
         ShowOptions(choice)
         HaloChoose:AddChoice("Sobel", 1)
         HaloChoose:AddChoice("GMod 12 Halo", 2)
-        if LocalPlayer():IsAdmin() or (GetConVar("enable_gm13_for_players"):GetInt() == 1 then
+        if LocalPlayer():IsAdmin() or GetConVar("enable_gm13_for_players"):GetInt() == 1 then
             HaloChoose:AddChoice("GMod 13 Halo", 3)
         end
         HaloChoose.OnSelect = function(panel, value)

@@ -90,11 +90,11 @@ function CST:DrawEffects()
             if not IsValid(v[1]) or not v[1]:IsValid() then
                 self.ENTITIES[k] = nil
             else
-                if v[1].cel.Mode == "1") then
+                if v[1].cel.Mode == "1" then
                     CST:SetPPeffect(v[1])
-                elseif (v[1].cel.Mode == "2") then
+                elseif v[1].cel.Mode == "2" then
                     CST:SetGMod12Halo(v[1])
-                elseif (v[1].cel.Mode == "3") then
+                elseif v[1].cel.Mode == "3" then
                     CST:SetGMod13Halo(v[1])
                 end
             end
