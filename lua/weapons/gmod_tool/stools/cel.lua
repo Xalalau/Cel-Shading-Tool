@@ -1,5 +1,5 @@
 --[[
-   \   Cel Shading Tool ]] local version = "1.2" --[[
+   \   Cel Shading Tool ]] local version = "GitHub 1.2+" --[[
  =o |   License: MIT
    /   Created by: Xalalau Xubilozo
   |
