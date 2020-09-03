@@ -76,7 +76,7 @@ end
 function CST:SetGMod13Halo(entTable)
     local size = entTable[1].cel.Size * 5 + math.Rand(0, entTable[1].cel.Shake)
 
-    halo.Add(entTable, entTable[1].cel.Color, size, size, entTable[1].cel.Passes, entTable[1].cel.Additive, entTable[1].cel.ThroughWalls)
+    halo.Add(entTable, entTable[1].cel.Color, size, size, entTable[1].cel.Passes, entTable[1].cel.Additive == "1" and true or false, entTable[1].cel.ThroughWalls == "1" and true or false)
 end
 
 -- Start sobel and GMod 12 halos
