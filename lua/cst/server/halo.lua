@@ -30,11 +30,9 @@ function CST:RemoveHalo(ent)
         end
     end
 
-    for _,v in ipairs(player.GetAll()) do
-        net.Start("net_remove_halo")
-            net.WriteEntity(ent)
-        net.Send(v)
-    end
+    net.Start("net_remove_halo")
+        net.WriteEntity(ent)
+    net.Broadcast()
 
     duplicator.ClearEntityModifier(ent, "Cel_Halo")
 end
