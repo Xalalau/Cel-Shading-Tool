@@ -60,21 +60,15 @@ function CST:SetGMod12HaloAux(ent, scale, color)
 end
 
 function CST:SetGMod12Halo(ent)
-    local shake = math.Rand(0, ent.cel.Layer1.Shake)
+    local shake2 = math.Rand(0, ent.cel.SingleShake == "1" and ent.cel.Layer1.Shake or ent.cel.Layer2.Shake)
+    local shake1 = ent.cel.Layers == "1" and (ent.cel.SingleShake == "1" and shake2 or math.Rand(0, ent.cel.Layer1.Shake))
+    local sizeLayer1 = ent.cel.Layers and (1 + ent.cel.Layer1.Size) or 0
+    local sizeLayer2 = sizeLayer1 + ent.cel.Layer2.Size
 
-    local addsizefromlayer2onlayer1 = 0
-    if ent.cel.Layers == 1 then
-        addsizefromlayer2onlayer1 = ent.cel.Layer2.Size / 2 + 1
-    end
+    self:SetGMod12HaloAux(ent, sizeLayer2 + shake2 / 15, ent.cel.Layer2.Color)
 
-    self:SetGMod12HaloAux(ent, ent.cel.Layer1.Size / 2 + addsizefromlayer2onlayer1 + shake / 15, ent.cel.Layer1.Color)
-
-    if ent.cel.Layers == 1 then
-        if ent.cel.SingleShake == 0 then
-            shake = math.Rand(0, ent.cel.Layer2.Shake)
-        end
-
-        self:SetGMod12HaloAux(ent, ent.cel.Layer2.Size / 2 + 1 + shake / 15, ent.cel.Layer2.Color)
+    if ent.cel.Layers == "1" then
+        self:SetGMod12HaloAux(ent, sizeLayer1 + shake1 / 15, ent.cel.Layer1.Color)
     end
 end
 
