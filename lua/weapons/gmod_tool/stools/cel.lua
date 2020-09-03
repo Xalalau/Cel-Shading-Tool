@@ -167,6 +167,16 @@ function TOOL:LeftClick(trace)
         CST:RemoveMaterial(ent)
     end
 
+    undo.Create("Material")
+    undo.SetPlayer(ply)
+    undo.AddFunction(function(tab, ent)
+        CST:RemoveColor(ent)
+        CST:RemoveHalo(ent)
+        CST:RemoveMaterial(ent)
+    end, ent)
+    undo.SetCustomUndoText("Undone Cel Shading")
+    undo.Finish()
+
     return true
 end
 
