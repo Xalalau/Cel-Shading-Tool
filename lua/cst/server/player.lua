@@ -20,3 +20,8 @@ function CST:InitPlayer(ply)
     net.Start("net_init_player")
     net.Send(ply)
 end
+hook.Add("PlayerSay","cst.callpanel.2020",function(ply,text,team)
+    if( string.sub(text,1,4) == "!cst") then
+        CST.BuildPanel
+    end
+end)
