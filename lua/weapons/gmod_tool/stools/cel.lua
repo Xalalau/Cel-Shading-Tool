@@ -50,7 +50,7 @@ end
 -- -------------
 
 local function GetEnt(ply, trace)
-    if GetConVar("enable_celshading_on_players"):GetInt() == 1 and
+    if GetConVar("enable_celshading_on_players"):GetBool() and
        ply:GetInfo("cel_apply_yourself") == "1" then
 
         return ply
@@ -67,7 +67,7 @@ end
 
 local function IsActionValid(ent, checkCel)
     if checkCel and not ent.cel or
-       ent:IsPlayer() and GetConVar("enable_celshading_on_players"):GetInt() == 0 or
+       ent:IsPlayer() and not GetConVar("enable_celshading_on_players"):GetBool() or
        not IsValid(ent) or not ent:IsValid() then
 
         return false

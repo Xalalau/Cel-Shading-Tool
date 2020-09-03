@@ -1,14 +1,5 @@
 local Frame
 
-net.Receive("net_init_gui", function()
-    CST:InitGui()
-end)
-
-function CST:InitGui()
-    RunConsoleCommand("enable_gm13_for_players", tostring(net.ReadInt(2)))
-    RunConsoleCommand("enable_celshading_on_players", tostring(net.ReadInt(2)))
-end
-
 function CST:BuildPanel()
     -- --------
     -- WINDOW:
@@ -396,9 +387,7 @@ function CST:BuildPanel()
         ApplyOnYourself:SetText("Apply The Effect On Yourself")
         ApplyOnYourself:SetValue(GetConVar("cel_apply_yourself"):GetInt())
         function ApplyOnYourself:OnChange(val)
-            net.Start("net_enable_celshading_yourself")
-                net.WriteBool(aux and true or false)
-            net.SendToServer()
+            RunConsoleCommand("cel_apply_yourself", val and "1" or "0")
         end
 
     local ApplyOnPlayers = vgui.Create("DCheckBoxLabel", panel1)
@@ -407,7 +396,9 @@ function CST:BuildPanel()
         ApplyOnPlayers:SetText("Enable Rendering On Playermodels")
         ApplyOnPlayers:SetValue(GetConVar("enable_celshading_on_players"):GetInt())
         function ApplyOnPlayers:OnChange(val)
-            RunConsoleCommand("enable_celshading_on_players", val and "1" or "0")
+            net.Start("net_enable_celshading_on_players")
+                net.WriteString(val and "1" or "0")
+            net.SendToServer()
         end
 
     local EnableHalo13ForPlayers = vgui.Create("DCheckBoxLabel", panel1)
@@ -416,7 +407,9 @@ function CST:BuildPanel()
         EnableHalo13ForPlayers:SetText("Enable \"GMod 13 Halo\" Option On Clients Menus")
         EnableHalo13ForPlayers:SetValue(GetConVar("enable_gm13_for_players"):GetInt())
         function EnableHalo13ForPlayers:OnChange(val)
-            RunConsoleCommand("enable_gm13_for_players", val and "1" or "0")
+            net.Start("net_enable_gm13halos_on_players")
+                net.WriteString(val and "1" or "0")
+            net.SendToServer()
         end
 
     if LocalPlayer():IsAdmin() and not game.SinglePlayer() then
