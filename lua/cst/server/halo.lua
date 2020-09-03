@@ -20,6 +20,8 @@ end
 duplicator.RegisterEntityModifier("Cel_Halo", CST.SetHalo)
 
 function CST:RemoveHalo(ent)
+    if not (ent and IsValid(ent) and ent:IsValid()) then return end
+
     ent.cel = nil
 
     for k,v in ipairs(self.ENTITIES) do
