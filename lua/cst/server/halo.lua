@@ -5,12 +5,10 @@ function CST:SetHalo(ply, ent, h_data)
     ent.cel = h_data
 
     timer.Simple(0.1, function()
-        for _,v in ipairs(player.GetAll()) do
-            net.Start("net_set_halo")
-                net.WriteEntity(ent)
-                net.WriteTable(h_data)
-            net.Send(v)
-        end
+        net.Start("net_set_halo")
+            net.WriteEntity(ent)
+            net.WriteTable(h_data)
+        net.Broadcast()
 
         table.insert(self.ENTITIES, { ent })
 
@@ -30,11 +28,9 @@ function CST:RemoveHalo(ent)
         end
     end
 
-    for _,v in ipairs(player.GetAll()) do
-        net.Start("net_remove_halo")
-            net.WriteEntity(ent)
-        net.Send(v)
-    end
+    net.Start("net_remove_halo")
+        net.WriteEntity(ent)
+    net.Broadcast()
 
     duplicator.ClearEntityModifier(ent, "Cel_Halo")
 end
