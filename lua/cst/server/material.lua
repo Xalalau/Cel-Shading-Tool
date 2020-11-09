@@ -6,7 +6,7 @@ function CST:SetMaterial(ply, ent, t_data)
 end
 
 function CST:RemoveMaterial(ent)
-    if not (ent and IsValid(ent) and ent:IsValid()) then return end
+    if not (ent and IsValid(ent) and ent:IsValid() and ent.cel) then return end
 
     self:SetMaterial(nil, ent, { MaterialOverride = "" })
 

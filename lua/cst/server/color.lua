@@ -18,7 +18,7 @@ function CST:SetColor(ply, ent, c_data)
 end
 
 function CST:RemoveColor(ent)
-    if not (ent and IsValid(ent) and ent:IsValid()) then return end
+    if not (ent and IsValid(ent) and ent:IsValid() and ent.cel) then return end
 
     self:SetColor(nil, ent, { Color = Color(255, 255, 255, 255), Mode = ent.cel.Mode })
 

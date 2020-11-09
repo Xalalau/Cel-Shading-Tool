@@ -112,6 +112,8 @@ hook.Add("PreDrawHalos", "PlayerBorders", function()
 end)
 
 function CST:RemoveHalo(ent)
+    if #self.ENTITIES == 0 then return end
+
     for k,v in ipairs(self.ENTITIES) do
         if table.HasValue(v, ent) then
             self.ENTITIES[k] = nil
