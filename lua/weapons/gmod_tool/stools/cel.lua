@@ -6,7 +6,7 @@ TOOL.Information = {
     { name = "reload" }
 }
 
-if (CLIENT) then
+if CLIENT then
     language.Add("Tool.cel.name", "Cel Shading")
     language.Add("Tool.cel.desc", "Adds Cel Shading like effects to entities")
     language.Add("Tool.cel.left", "Apply")
@@ -17,7 +17,7 @@ end
 CreateConVar("enable_gm13_for_players", "0", FCVAR_REPLICATED)
 CreateConVar("enable_celshading_on_players", "1", FCVAR_REPLICATED)
 
-if (CLIENT) then
+if CLIENT then
     CreateClientConVar("cel_h_mode", 1, false, true)
     CreateClientConVar("cel_h_colour_r", 255, false, true)
     CreateClientConVar("cel_h_colour_g", 0, false, true)
@@ -167,6 +167,7 @@ function TOOL:LeftClick(trace)
         CST:RemoveMaterial(ent)
     end
 
+    -- Set the undo
     undo.Create("Material")
     undo.SetPlayer(ply)
     undo.AddFunction(function(tab, ent)
@@ -213,12 +214,12 @@ function TOOL:RightClick(trace)
     local mode = ent.cel.Mode
     ply:ConCommand("cel_h_mode " .. tostring(mode))
 
-    if (mode == "1") then
+    if mode == "1" then
         ply:ConCommand("cel_sobel_thershold " .. tostring(ent.cel.SobelThershold))
         ply:ConCommand("cel_h_colour_r 255")
         ply:ConCommand("cel_h_colour_g 255")
         ply:ConCommand("cel_h_colour_b 255")
-    elseif (mode == "2") then
+    elseif mode == "2" then
         ply:ConCommand("cel_h_size " .. tostring(ent.cel.Layer1.Size))
         ply:ConCommand("cel_h_shake " .. tostring(ent.cel.Layer1.Shake))
         ply:ConCommand("cel_h_colour_r " .. tostring(ent.cel.Layer1.Color.r))
@@ -231,7 +232,7 @@ function TOOL:RightClick(trace)
         ply:ConCommand("cel_h_12_colour_b_2 " .. tostring(ent.cel.Layer2.Color.b))
         ply:ConCommand("cel_h_12_singleshake " .. tostring(ent.cel.SingleShake))
         ply:ConCommand("cel_h_12_two_layers " .. tostring(ent.cel.Layers))
-    elseif (mode == "3") then
+    elseif mode == "3" then
         ply:ConCommand("cel_h_size " .. tostring(ent.cel.Size))
         ply:ConCommand("cel_h_shake " .. tostring(ent.cel.Shake))
         ply:ConCommand("cel_h_colour_r " .. tostring(ent.cel.Color.r))
