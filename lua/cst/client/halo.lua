@@ -1,8 +1,4 @@
-local haloEntList = {
-    ["1"] = {},
-    ["2"] = {},
-    ["3"] = {}
-}
+local haloEntList = {}
 
 net.Receive("cl_SetHalo", function()
     CST:SetHalo(net.ReadEntity(), net.ReadTable())
@@ -95,18 +91,18 @@ end
 
 -- Start rendering sobel and GMod 12/13 halos
 local function DrawAux(entTbl)
-    if table.Count(entTbl) > 0 then
+    if entTbl and table.Count(entTbl) > 0 then
         for k,v in pairs(entTbl) do
             local ent, h_data = v[1], v[2]
 
             if not IsValid(ent) or not ent:IsValid() then
                 CST:RemoveHalo(ent, h_data.Mode)
             else
-                if h_data.Mode == "1" then
+                if h_data.Mode == "sobel" then
                     CST:SetPPeffect(ent, h_data)
-                elseif h_data.Mode == "2" then
+                elseif h_data.Mode == "gm12" then
                     CST:SetGMod12Halo(ent, h_data)
-                elseif h_data.Mode == "3" then
+                elseif h_data.Mode == "gm13" then
                     CST:SetGMod13Halo(ent, h_data)
                 end
             end
@@ -115,12 +111,12 @@ local function DrawAux(entTbl)
 end
 
 hook.Add("PostDrawOpaqueRenderables", "CST Halos 1", function()
-    DrawAux(haloEntList["1"])
-    DrawAux(haloEntList["2"])
+    DrawAux(haloEntList["sobel"])
+    DrawAux(haloEntList["gm12"])
 end)
 
 hook.Add("PreDrawHalos", "CST Halos 2", function()
-    DrawAux(haloEntList["3"])
+    DrawAux(haloEntList["gm13"])
 end)
 
 function CST:RemoveHalo(ent, mode)
@@ -128,5 +124,9 @@ function CST:RemoveHalo(ent, mode)
 end
 
 function CST:SetHalo(ent, h_data)
+    if not haloEntList[h_data.Mode] then
+        haloEntList[h_data.Mode] = {}
+    end
+
     haloEntList[h_data.Mode][ent:EntIndex()] = { ent, h_data }
 end

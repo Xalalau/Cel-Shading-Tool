@@ -272,7 +272,7 @@ function CST:BuildPanel()
         Halo12ExtraLayer:SetValue(GetConVar("cel_h_12_two_layers"):GetInt())
         function Halo12ExtraLayer:OnChange(val)
             if val then
-                if (GetConVar("cel_h_mode"):GetInt() == 2) then -- Used for hiding these options when reseting everything
+                if GetConVar("cel_h_mode"):GetString() == "gm12" then -- Used for hiding these options when reseting everything
                     Halo12Choose2Label:SetVisible(true)
                     Halo12Choose2:SetVisible(true)
                     Halo12SingleShake:SetVisible(true)
@@ -288,7 +288,7 @@ function CST:BuildPanel()
 
     -- This is an old, shitty piece of code that I don't want to fix.
     local function ShowOptions(mode)
-        if mode == 1 then
+        if mode == "sobel" then
             SobelLabel:SetVisible(true)
             Sobel:SetVisible(true)
             HaloSizeLabel:SetVisible(false)
@@ -306,7 +306,7 @@ function CST:BuildPanel()
             Halo12Choose2:SetVisible(false)
             Halo12SingleShake:SetVisible(false)
             TextureMimic:SetVisible(false)
-        elseif mode == 2 then
+        elseif mode == "gm12" then
             SobelLabel:SetVisible(false)
             Sobel:SetVisible(false)
             HaloSizeLabel:SetVisible(true)
@@ -326,7 +326,7 @@ function CST:BuildPanel()
                 Halo12SingleShake:SetVisible(true)
             end
             TextureMimic:SetVisible(true)
-        elseif mode == 3 then
+        elseif mode == "gm13" then
             SobelLabel:SetVisible(false)
             Sobel:SetVisible(false)
             HaloSizeLabel:SetVisible(true)
@@ -347,12 +347,22 @@ function CST:BuildPanel()
         end
     end
 
-    local function HaloChooseOptions(choice)
+    local function HaloGetOptionID(choice)
         if choice == 1 then
-            return "Sobel"
+            return "sobel"
         elseif choice == 2 then
-            return "GMod 12 Halo"
+            return "gm12"
         elseif choice == 3 then
+            return "gm13"
+        end
+    end
+
+    local function HaloGetOptionValue(choice)
+        if choice == "sobel" then
+            return "Sobel"
+        elseif choice == "gm12" then
+            return "GMod 12 Halo"
+        elseif choice == "gm13" then
             return "GMod 13 Halo"
         end
     end
@@ -360,16 +370,17 @@ function CST:BuildPanel()
     local HaloChoose = vgui.Create("DComboBox", panel2)
         HaloChoose:SetPos(10, 30)
         HaloChoose:SetSize(190, 25)
-        local choice = GetConVar("cel_h_mode"):GetInt()
-        HaloChoose:SetValue(HaloChooseOptions(choice))
+        local choice = GetConVar("cel_h_mode"):GetString()
+        HaloChoose:SetValue(HaloGetOptionValue(choice))
         ShowOptions(choice)
-        HaloChoose:AddChoice("Sobel", 1)
-        HaloChoose:AddChoice("GMod 12 Halo", 2)
+        HaloChoose:AddChoice("Sobel", "sobel")
+        HaloChoose:AddChoice("GMod 12 Halo", "gm12")
         if LocalPlayer():IsAdmin() or GetConVar("enable_gm13_for_players"):GetInt() == 1 then
-            HaloChoose:AddChoice("GMod 13 Halo", 3)
+            HaloChoose:AddChoice("GMod 13 Halo", "gm13")
         end
         HaloChoose.OnSelect = function(panel, value)
-            RunConsoleCommand("cel_h_mode", tostring(value))
+            value = HaloGetOptionID(value)
+            RunConsoleCommand("cel_h_mode", value)
             ShowOptions(value)
         end
 
@@ -423,7 +434,7 @@ function CST:BuildPanel()
         ResetButton:SetText("Reset Options!")
         ResetButton:SetSize(120, 30)
         ResetButton.DoClick = function()
-            HaloChoose:ChooseOption(HaloChooseOptions(1), 1)
+            HaloChoose:ChooseOption(HaloGetOptionValue("sobel"), 1)
             Halo12Choose2:ChooseOption(Halo12Choose2Options(1), 1)
             timer.Simple(0.3, function() -- Wait for the changes
                 RunConsoleCommand("cel_h_colour_r", "255")

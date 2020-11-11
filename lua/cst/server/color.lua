@@ -1,9 +1,9 @@
 function CST:SetColor(ent, c_data)
     ent:SetNWBool("Cel_Color", true)
 
-    if c_data.Mode == "2" then
+    if c_data.Mode == "gm12" then
         ent:SetRenderMode(RENDERMODE_TRANSCOLOR)
-    elseif c_data.Mode == "1" then
+    elseif c_data.Mode == "sobel" then
         ent:SetRenderMode(RENDERMODE_NORMAL)
         ent:PhysWake()
     end

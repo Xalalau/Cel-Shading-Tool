@@ -18,7 +18,7 @@ CreateConVar("enable_gm13_for_players", "0", FCVAR_REPLICATED)
 CreateConVar("enable_celshading_on_players", "1", FCVAR_REPLICATED)
 
 if CLIENT then
-    CreateClientConVar("cel_h_mode", 1, false, true)
+    CreateClientConVar("cel_h_mode", "sobel", false, true)
     CreateClientConVar("cel_h_colour_r", 255, false, true)
     CreateClientConVar("cel_h_colour_g", 0, false, true)
     CreateClientConVar("cel_h_colour_b", 0, false, true)
@@ -87,7 +87,7 @@ function TOOL:LeftClick(trace)
 
     local mode = ply:GetInfo("cel_h_mode")
 
-    if mode == "3" and not ply:IsAdmin() and ply:GetInfo("enable_gm13_for_players") == "0" then
+    if mode == "gm13" and not ply:IsAdmin() and ply:GetInfo("enable_gm13_for_players") == "0" then
         ply:PrintMessage(HUD_PRINTTALK, "GM 13 Halos are admin only.")
 
         return
@@ -96,7 +96,7 @@ function TOOL:LeftClick(trace)
     local h_data
 
     -- Sobel
-    if mode == "1" then
+    if mode == "sobel" then
         h_data = { SobelThershold = ply:GetInfo("cel_sobel_thershold"), Mode = mode }
     -- Halos
     else
@@ -107,7 +107,7 @@ function TOOL:LeftClick(trace)
         local shake = ply:GetInfo("cel_h_shake")
 
         -- GMod 12 halo
-        if mode == "2" then
+        if mode == "gm12" then
             local layers = ply:GetInfo("cel_h_12_two_layers")
             local singleshake = ply:GetInfo("cel_h_12_singleshake")
             local r2 = ply:GetInfo("cel_h_12_colour_r_2")
@@ -123,7 +123,7 @@ function TOOL:LeftClick(trace)
             }
 
         -- GMod 13 halo
-        elseif mode == "3" then
+        elseif mode == "gm13" then
             local passes = ply:GetInfo("cel_h_13_passes")
             local additive = ply:GetInfo("cel_h_13_additive")
             local throughwalls = ply:GetInfo("cel_h_13_throughwalls")
@@ -215,12 +215,12 @@ function TOOL:RightClick(trace)
     ply:ConCommand("cel_colour_g " .. tostring(clr.g))
     ply:ConCommand("cel_colour_b " .. tostring(clr.b))
 
-    if mode == "1" then
+    if mode == "sobel" then
         ply:ConCommand("cel_sobel_thershold " .. tostring(ent.h_data.SobelThershold))
         ply:ConCommand("cel_h_colour_r 255")
         ply:ConCommand("cel_h_colour_g 255")
         ply:ConCommand("cel_h_colour_b 255")
-    elseif mode == "2" then
+    elseif mode == "gm12" then
         ply:ConCommand("cel_h_size " .. tostring(ent.h_data.Layer1.Size))
         ply:ConCommand("cel_h_shake " .. tostring(ent.h_data.Layer1.Shake))
         ply:ConCommand("cel_h_colour_r " .. tostring(ent.h_data.Layer1.Color.r))
@@ -233,7 +233,7 @@ function TOOL:RightClick(trace)
         ply:ConCommand("cel_h_12_colour_b_2 " .. tostring(ent.h_data.Layer2.Color.b))
         ply:ConCommand("cel_h_12_singleshake " .. tostring(ent.h_data.SingleShake))
         ply:ConCommand("cel_h_12_two_layers " .. tostring(ent.h_data.Layers))
-    elseif mode == "3" then
+    elseif mode == "gm13" then
         ply:ConCommand("cel_h_size " .. tostring(ent.h_data.Size))
         ply:ConCommand("cel_h_shake " .. tostring(ent.h_data.Shake))
         ply:ConCommand("cel_h_colour_r " .. tostring(ent.h_data.Color.r))
@@ -249,7 +249,7 @@ end
 
 function TOOL:Reload(trace)
     local ent = GetEnt(self:GetOwner(), trace)
-    local mode = ent:GetNWInt("Cel_Halo")
+    local mode = ent:GetNWString("Cel_Halo")
 
     if not IsActionValid(ent) or not mode or mode == "" then
         return false
