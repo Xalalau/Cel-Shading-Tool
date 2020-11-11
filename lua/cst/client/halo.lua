@@ -1,13 +1,19 @@
-net.Receive("net_set_halo", function()
+local haloEntList = {
+    ["1"] = {},
+    ["2"] = {},
+    ["3"] = {}
+}
+
+net.Receive("cl_SetHalo", function()
     CST:SetHalo(net.ReadEntity(), net.ReadTable())
 end)
 
-net.Receive("net_remove_halo", function()
-    CST:RemoveHalo(net.ReadEntity())
+net.Receive("cl_RemoveHalo", function()
+    CST:RemoveHalo(net.ReadEntity(), net.ReadString())
 end)
 
 -- Sobel PP effect (light / works / players)
-function CST:SetPPeffect(ent)
+function CST:SetPPeffect(ent, h_data)
     render.ClearStencil()
     render.SetStencilEnable(true)
         render.SetStencilWriteMask(255)
@@ -16,17 +22,17 @@ function CST:SetPPeffect(ent)
         render.SetStencilPassOperation(STENCILOPERATION_REPLACE)
         render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_ALWAYS)
         render.SetBlend(0)
-        if ent.cel.Color then
-            ent:SetColor(ent.cel.Color)
+        if h_data.Color then
+            ent:SetColor(h_data.Color)
         end
         ent:DrawModel()
         render.SetBlend(1)
         render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_EQUAL)
-        render.UpdateScreenEffectTexture();
-        self.SOBELMAT:SetFloat("$threshold", 0.15 - ent.cel.SobelThershold * 0.15)
+        render.UpdateScreenEffectTexture()
+        self.SOBELMAT:SetFloat("$threshold", 0.15 - h_data.SobelThershold * 0.15)
         ent:DrawModel()
-        render.SetMaterial(self.SOBELMAT);
-        render.DrawScreenQuad();
+        render.SetMaterial(self.SOBELMAT)
+        render.DrawScreenQuad()
     render.SetStencilEnable(false)
 end
 
@@ -47,11 +53,11 @@ function CST:SetGMod12HaloAux(ent, scale, color)
         render.SetBlend(0)
         ent:SetModelScale(scale, 0)
         ent:DrawModel()
-        ent:SetModelScale(1,0)
+        ent:SetModelScale(1, 0)
         render.SetBlend(1)
         render.SetStencilPassOperation(STENCIL_KEEP)
         render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_EQUAL)
-        cam.Start3D2D(pos,ang,1)
+        cam.Start3D2D(pos, ang, 1)
             surface.SetDrawColor(color)
             surface.DrawRect(-ScrW(), -ScrH(), ScrW() * 2, ScrH() * 2)
         cam.End3D2D()
@@ -59,77 +65,68 @@ function CST:SetGMod12HaloAux(ent, scale, color)
     render.SetStencilEnable(false)
 end
 
-function CST:SetGMod12Halo(ent)
-    local shake2 = math.Rand(0, ent.cel.SingleShake == "1" and ent.cel.Layer1.Shake or ent.cel.Layer2.Shake)
-    local shake1 = ent.cel.Layers == "1" and (ent.cel.SingleShake == "1" and shake2 or math.Rand(0, ent.cel.Layer1.Shake))
-    local sizeLayer1 = ent.cel.Layers and (1 + ent.cel.Layer1.Size) or 0
-    local sizeLayer2 = sizeLayer1 + ent.cel.Layer2.Size
+function CST:SetGMod12Halo(ent, h_data)
+    local shake2 = math.Rand(0, h_data.SingleShake == "1" and h_data.Layer1.Shake or h_data.Layer2.Shake)
+    local shake1 = h_data.Layers == "1" and (h_data.SingleShake == "1" and shake2 or math.Rand(0, h_data.Layer1.Shake))
+    local sizeLayer1 = h_data.Layers and (1 + h_data.Layer1.Size) or 0
+    local sizeLayer2 = sizeLayer1 + h_data.Layer2.Size
 
-    self:SetGMod12HaloAux(ent, sizeLayer2 + shake2 / 15, ent.cel.Layer2.Color)
+    self:SetGMod12HaloAux(ent, sizeLayer2 + shake2 / 15, h_data.Layer2.Color)
 
-    if ent.cel.Layers == "1" then
-        self:SetGMod12HaloAux(ent, sizeLayer1 + shake1 / 15, ent.cel.Layer1.Color)
+    if h_data.Layers == "1" then
+        self:SetGMod12HaloAux(ent, sizeLayer1 + shake1 / 15, h_data.Layer1.Color)
     end
 end
 
 -- GMod 13 halos (heavy / works / admins)
-function CST:SetGMod13Halo(entTable)
-    local size = entTable[1].cel.Size * 5 + math.Rand(0, entTable[1].cel.Shake)
+function CST:SetGMod13Halo(ent, h_data)
+    local size = h_data.Size * 5 + math.Rand(0, h_data.Shake)
 
-    halo.Add(entTable, entTable[1].cel.Color, size, size, entTable[1].cel.Passes, entTable[1].cel.Additive == "1" and true or false, entTable[1].cel.ThroughWalls == "1" and true or false)
+    halo.Add(
+        { ent },
+        h_data.Color,
+        size,
+        size,
+        h_data.Passes,
+        h_data.Additive == "1" and true or false,
+        h_data.ThroughWalls == "1" and true or false
+    )
 end
 
--- Start sobel and GMod 12 halos
-hook.Add("PostDrawOpaqueRenderables", "PlayerBorders", function()
-    if table.Count(CST.ENTITIES) > 0 then
-        for k,v in ipairs(CST.ENTITIES) do
-            if not IsValid(v[1]) or not v[1]:IsValid() then
-                CST.ENTITIES[k] = nil
+-- Start rendering sobel and GMod 12/13 halos
+local function DrawAux(entTbl)
+    if table.Count(entTbl) > 0 then
+        for k,v in pairs(entTbl) do
+            local ent, h_data = v[1], v[2]
+
+            if not IsValid(ent) or not ent:IsValid() then
+                CST:RemoveHalo(ent, h_data.Mode)
             else
-                if v[1].cel.Mode == "1" then
-                    CST:SetPPeffect(v[1])
-                elseif v[1].cel.Mode == "2" then
-                    CST:SetGMod12Halo(v[1])
-                elseif v[1].cel.Mode == "3" then
-                    CST:SetGMod13Halo(v)
+                if h_data.Mode == "1" then
+                    CST:SetPPeffect(ent, h_data)
+                elseif h_data.Mode == "2" then
+                    CST:SetGMod12Halo(ent, h_data)
+                elseif h_data.Mode == "3" then
+                    CST:SetGMod13Halo(ent, h_data)
                 end
             end
         end
     end
+end
+
+hook.Add("PostDrawOpaqueRenderables", "CST Halos 1", function()
+    DrawAux(haloEntList["1"])
+    DrawAux(haloEntList["2"])
 end)
 
--- Start GMod 13 halos
-hook.Add("PreDrawHalos", "PlayerBorders", function()
-    if table.Count(CST.ENTITIES) > 0 then
-        for k,v in ipairs(CST.ENTITIES) do
-            if not IsValid(v[1]) or not v[1]:IsValid() then
-                if v[1].cel.Mode == "3" then
-                    CST:SetGMod13Halo(v)
-                end
-            end
-        end
-    end
+hook.Add("PreDrawHalos", "CST Halos 2", function()
+    DrawAux(haloEntList["3"])
 end)
 
-function CST:RemoveHalo(ent)
-    if #self.ENTITIES == 0 then return end
-
-    for k,v in ipairs(self.ENTITIES) do
-        if table.HasValue(v, ent) then
-            self.ENTITIES[k] = nil
-        end
-    end
-
-    ent.cel = nil
+function CST:RemoveHalo(ent, mode)
+    haloEntList[mode][ent:EntIndex()] = nil
 end
 
 function CST:SetHalo(ent, h_data)
-    for k,v in ipairs(self.ENTITIES) do
-        if table.HasValue(v, ent) then
-            self.ENTITIES[k] = nil
-        end
-    end
-
-    ent.cel = h_data
-    table.insert(self.ENTITIES, { ent })
+    haloEntList[h_data.Mode][ent:EntIndex()] = { ent, h_data }
 end

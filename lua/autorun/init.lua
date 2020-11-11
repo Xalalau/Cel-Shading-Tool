@@ -14,8 +14,6 @@ CST.TEXTURES = {
     "models/player/shared/ice_player",
 }
 
-CST.ENTITIES = {}
-
 if CLIENT then
     CST.SOBELMAT = Material("pp/sobel")
     CST.SOBELMAT:SetTexture("$fbtexture", render.GetScreenEffectTexture())
@@ -43,26 +41,3 @@ if SERVER then
     includeModules(CST.FOLDER.SV_MODULES)
 end
 includeModules(CST.FOLDER.CL_MODULES, true)
-
--- First spawn hook
--- Wait until the player fully loads (https://github.com/Facepunch/garrysmod-requests/issues/718)
-if SERVER then
-    hook.Add("PlayerInitialSpawn", "MRPlyfirstSpawn", function(ply)
-        hook.Add("SetupMove", ply, function(self, ply, _, cmd)
-            if self == ply and not cmd:IsForced() then
-                CST:InitPlayer(ply)
-
-                if table.Count(CST.ENTITIES) > 0 then
-                    for _,v in ipairs(CST.ENTITIES) do
-                        net.Start("net_set_halo")
-                            net.WriteEntity(v[1])
-                            net.WriteTable(v[1].cel)
-                        net.Send(ply)
-                    end
-                end
-
-                hook.Remove("SetupMove", self)
-            end
-        end)
-    end)
-end

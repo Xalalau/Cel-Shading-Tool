@@ -4,10 +4,10 @@ function CST:BuildPanel()
     -- --------
     -- WINDOW:
     -- --------
-    
+
     local panelw = 510
     local panelh = 340
-    
+
     if Frame then
         Frame:SetVisible(true)
         return

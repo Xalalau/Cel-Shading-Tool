@@ -1,26 +1,26 @@
-function CST:SetColor(ply, ent, c_data)
-    if c_data.Color then
-        if c_data.Mode == 2 then
-            ent:SetRenderMode(RENDERMODE_TRANSCOLOR)
-        else
-            ent:SetRenderMode(RENDERMODE_NORMAL)
-        end
+function CST:SetColor(ent, c_data)
+    ent:SetNWBool("Cel_Color", true)
 
-        ent:SetColor(c_data.Color)
-
-        if c_data.Mode == 1 then
-            ent:PhysWake()
-        end
+    if c_data.Mode == "2" then
+        ent:SetRenderMode(RENDERMODE_TRANSCOLOR)
+    elseif c_data.Mode == "1" then
+        ent:SetRenderMode(RENDERMODE_NORMAL)
+        ent:PhysWake()
     end
 
-    duplicator.StoreEntityModifier(ent, "Cel_Colour", c_data)
-    duplicator.RegisterEntityModifier("Cel_Colour", SetColor)
+    ent:SetColor(c_data.Color)
+
+    duplicator.StoreEntityModifier(ent, "Cel_ColorDup", c_data)
 end
+duplicator.RegisterEntityModifier("Cel_ColorDup", SetColor)
 
 function CST:RemoveColor(ent)
-    if not (ent and IsValid(ent) and ent:IsValid() and ent.cel) then return end
+    if not (ent and IsValid(ent) and ent:IsValid()) then return end
+    if not ent:GetNWBool("Cel_Color") then return end
 
-    self:SetColor(nil, ent, { Color = Color(255, 255, 255, 255), Mode = ent.cel.Mode })
+    ent:SetNWBool("Cel_Color", false)
+    ent:SetRenderMode(RENDERMODE_NORMAL)
+    ent:SetColor(color_white)
 
-    duplicator.ClearEntityModifier(ent, "Cel_Colour")
+    duplicator.ClearEntityModifier(ent, "Cel_ColorDup")
 end

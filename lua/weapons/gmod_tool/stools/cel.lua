@@ -65,9 +65,8 @@ local function GetEnt(ply, trace)
     return ent
 end
 
-local function IsActionValid(ent, checkCel)
-    if checkCel and not ent.cel or
-       ent:IsPlayer() and not GetConVar("enable_celshading_on_players"):GetBool() or
+local function IsActionValid(ent)
+    if ent:IsPlayer() and not GetConVar("enable_celshading_on_players"):GetBool() or
        not IsValid(ent) or not ent:IsValid() then
 
         return false
@@ -98,7 +97,7 @@ function TOOL:LeftClick(trace)
 
     -- Sobel
     if mode == "1" then
-        h_data = { SobelThershold = (ply:GetInfo("cel_sobel_thershold")), Mode = mode }
+        h_data = { SobelThershold = ply:GetInfo("cel_sobel_thershold"), Mode = mode }
     -- Halos
     else
         local r = ply:GetInfo("cel_h_colour_r")
@@ -133,11 +132,12 @@ function TOOL:LeftClick(trace)
         end
     end
 
-    -- Texture and texture color
+    -- Texture and color
     local c_data, t_data
-    if (ply:GetInfo("cel_apply_texture") == "1") then
+    if ply:GetInfo("cel_apply_texture") == "1" then
         local r, g, b
-        if (ply:GetInfo("cel_texture_mimic_halo") == "1") then
+
+        if ply:GetInfo("cel_texture_mimic_halo") == "1" then
             r = ply:GetInfo("cel_h_colour_r")
             g = ply:GetInfo("cel_h_colour_g")
             b = ply:GetInfo("cel_h_colour_b")
@@ -146,23 +146,24 @@ function TOOL:LeftClick(trace)
             g = ply:GetInfo("cel_colour_g")
             b = ply:GetInfo("cel_colour_b")
         end
+
         c_data = { Color = Color(r, g, b, 255), Mode = mode }
-        t_data = { MaterialOverride = CST.TEXTURES[tonumber(ply:GetInfo("cel_texture"))] }
+        t_data = CST.TEXTURES[tonumber(ply:GetInfo("cel_texture"))]
     end
 
     -- Set halo
-    CST:SetHalo(nil, ent, h_data)
+    CST:SetHalo(ent, h_data)
 
     -- Set color
     if c_data and (table.Count(c_data) > 0) then
-        CST:SetColor(nil, ent, c_data)
+        CST:SetColor(ent, c_data)
     else
         CST:RemoveColor(ent)
     end
 
     -- Set texture
-    if t_data and (table.Count(t_data) > 0) then
-        CST:SetMaterial(nil, ent, t_data)
+    if t_data then
+        CST:SetMaterial(ent, t_data)
     else
         CST:RemoveMaterial(ent)
     end
@@ -184,8 +185,9 @@ end
 function TOOL:RightClick(trace)
     local ply = self:GetOwner()
     local ent = GetEnt(ply, trace)
+    local mode = ent:GetNWString("Cel_Halo")
 
-    if not IsActionValid(ent, true) then 
+    if not IsActionValid(ent) or not mode or mode == "" then
         return false
     end
 
@@ -202,54 +204,54 @@ function TOOL:RightClick(trace)
         end
     end
 
+    ply:ConCommand("cel_h_mode " .. mode)
+
     ply:ConCommand("cel_apply_yourself " .. (ent == ply and "1" or "0"))
 
     ply:ConCommand("cel_apply_texture " .. tostring(texture_enabled))
-    
+
     local clr = ent:GetColor()
     ply:ConCommand("cel_colour_r " .. tostring(clr.r))
     ply:ConCommand("cel_colour_g " .. tostring(clr.g))
     ply:ConCommand("cel_colour_b " .. tostring(clr.b))
-    
-    local mode = ent.cel.Mode
-    ply:ConCommand("cel_h_mode " .. tostring(mode))
 
     if mode == "1" then
-        ply:ConCommand("cel_sobel_thershold " .. tostring(ent.cel.SobelThershold))
+        ply:ConCommand("cel_sobel_thershold " .. tostring(ent.h_data.SobelThershold))
         ply:ConCommand("cel_h_colour_r 255")
         ply:ConCommand("cel_h_colour_g 255")
         ply:ConCommand("cel_h_colour_b 255")
     elseif mode == "2" then
-        ply:ConCommand("cel_h_size " .. tostring(ent.cel.Layer1.Size))
-        ply:ConCommand("cel_h_shake " .. tostring(ent.cel.Layer1.Shake))
-        ply:ConCommand("cel_h_colour_r " .. tostring(ent.cel.Layer1.Color.r))
-        ply:ConCommand("cel_h_colour_g " .. tostring(ent.cel.Layer1.Color.g))
-        ply:ConCommand("cel_h_colour_b " .. tostring(ent.cel.Layer1.Color.b))
-        ply:ConCommand("cel_h_12_size_2 " .. tostring(ent.cel.Layer2.Size))
-        ply:ConCommand("cel_h_12_shake_2 " .. tostring(ent.cel.Layer2.Shake))
-        ply:ConCommand("cel_h_12_colour_r_2 " .. tostring(ent.cel.Layer2.Color.r))
-        ply:ConCommand("cel_h_12_colour_g_2 " .. tostring(ent.cel.Layer2.Color.g))
-        ply:ConCommand("cel_h_12_colour_b_2 " .. tostring(ent.cel.Layer2.Color.b))
-        ply:ConCommand("cel_h_12_singleshake " .. tostring(ent.cel.SingleShake))
-        ply:ConCommand("cel_h_12_two_layers " .. tostring(ent.cel.Layers))
+        ply:ConCommand("cel_h_size " .. tostring(ent.h_data.Layer1.Size))
+        ply:ConCommand("cel_h_shake " .. tostring(ent.h_data.Layer1.Shake))
+        ply:ConCommand("cel_h_colour_r " .. tostring(ent.h_data.Layer1.Color.r))
+        ply:ConCommand("cel_h_colour_g " .. tostring(ent.h_data.Layer1.Color.g))
+        ply:ConCommand("cel_h_colour_b " .. tostring(ent.h_data.Layer1.Color.b))
+        ply:ConCommand("cel_h_12_size_2 " .. tostring(ent.h_data.Layer2.Size))
+        ply:ConCommand("cel_h_12_shake_2 " .. tostring(ent.h_data.Layer2.Shake))
+        ply:ConCommand("cel_h_12_colour_r_2 " .. tostring(ent.h_data.Layer2.Color.r))
+        ply:ConCommand("cel_h_12_colour_g_2 " .. tostring(ent.h_data.Layer2.Color.g))
+        ply:ConCommand("cel_h_12_colour_b_2 " .. tostring(ent.h_data.Layer2.Color.b))
+        ply:ConCommand("cel_h_12_singleshake " .. tostring(ent.h_data.SingleShake))
+        ply:ConCommand("cel_h_12_two_layers " .. tostring(ent.h_data.Layers))
     elseif mode == "3" then
-        ply:ConCommand("cel_h_size " .. tostring(ent.cel.Size))
-        ply:ConCommand("cel_h_shake " .. tostring(ent.cel.Shake))
-        ply:ConCommand("cel_h_colour_r " .. tostring(ent.cel.Color.r))
-        ply:ConCommand("cel_h_colour_g " .. tostring(ent.cel.Color.g))
-        ply:ConCommand("cel_h_colour_b " .. tostring(ent.cel.Color.b))
-        ply:ConCommand("cel_h_13_passes " .. tostring(ent.cel.Passes))
-        ply:ConCommand("cel_h_13_additive " .. (ent.cel.Additive and "1" or "0"))
-        ply:ConCommand("cel_h_13_throughwalls " .. (ent.cel.ThroughWalls and "1" or "0"))
+        ply:ConCommand("cel_h_size " .. tostring(ent.h_data.Size))
+        ply:ConCommand("cel_h_shake " .. tostring(ent.h_data.Shake))
+        ply:ConCommand("cel_h_colour_r " .. tostring(ent.h_data.Color.r))
+        ply:ConCommand("cel_h_colour_g " .. tostring(ent.h_data.Color.g))
+        ply:ConCommand("cel_h_colour_b " .. tostring(ent.h_data.Color.b))
+        ply:ConCommand("cel_h_13_passes " .. tostring(ent.h_data.Passes))
+        ply:ConCommand("cel_h_13_additive " .. (ent.h_data.Additive and "1" or "0"))
+        ply:ConCommand("cel_h_13_throughwalls " .. (ent.h_data.ThroughWalls and "1" or "0"))
     end
-    
+
     return true
 end
 
 function TOOL:Reload(trace)
     local ent = GetEnt(self:GetOwner(), trace)
+    local mode = ent:GetNWInt("Cel_Halo")
 
-    if not IsActionValid(ent, true) then 
+    if not IsActionValid(ent) or not mode or mode == "" then
         return false
     end
 
