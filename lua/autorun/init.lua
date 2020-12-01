@@ -1,7 +1,7 @@
 CST = {}
 CST.__index = CST
 
-CST.VERSION = "1.3"
+CST.VERSION = "1.3.1"
 
 CST.FOLDER = {}
 CST.FOLDER.LUA = "cst/"
