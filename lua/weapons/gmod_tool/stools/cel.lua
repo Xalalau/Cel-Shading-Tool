@@ -87,7 +87,7 @@ function TOOL:LeftClick(trace)
 
     local mode = ply:GetInfo("cel_h_mode")
 
-    if mode == "gm13" and not ply:IsAdmin() and ply:GetInfo("enable_gm13_for_players") == "0" then
+    if mode == "gm13" and not ply:IsAdmin() and GetConVar("enable_gm13_for_players"):GetInt() == 0 then
         ply:PrintMessage(HUD_PRINTTALK, "GM 13 Halos are admin only.")
 
         return
