@@ -7,7 +7,6 @@ CST.FOLDER = {}
 CST.FOLDER.LUA = "cst/"
 CST.FOLDER.SV_MODULES = CST.FOLDER.LUA .. "server/"
 CST.FOLDER.CL_MODULES = CST.FOLDER.LUA .. "client/"
-
 CST.TEXTURES = {
     "models/debug/debugwhite",
     "models/shiny",
