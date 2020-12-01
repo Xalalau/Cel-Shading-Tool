@@ -387,12 +387,12 @@ function CST:BuildPanel()
     -- --------
 
     local Description = vgui.Create("DLabel", panel1)
-        Description:SetPos(50, 20)
-        Description:SetSize(490, 45)
+        Description:SetPos(50, 18)
+        Description:SetSize(492, 45)
         Description:SetText("Rendering modes work well or poorly depending on the entity, so do your tests.\n\n            The \"GMod 13 Halo\" mode is very good, but it causes a lot of lag!")
 
     local ApplyOnYourself = vgui.Create("DCheckBoxLabel", panel1)
-        ApplyOnYourself:SetPos(155, 130)
+        ApplyOnYourself:SetPos(164, 130)
         ApplyOnYourself:SetText("Apply the effect to yourself")
         ApplyOnYourself:SetValue(GetConVar("cel_apply_yourself"):GetInt())
         function ApplyOnYourself:OnChange(val)
@@ -401,7 +401,7 @@ function CST:BuildPanel()
 
     local ApplyOnPlayers = vgui.Create("DCheckBoxLabel", panel1)
         ApplyOnPlayers:SetVisible(false)
-        ApplyOnPlayers:SetPos(137, 150)
+        ApplyOnPlayers:SetPos(152, 143)
         ApplyOnPlayers:SetText("Enable rendering in playermodels")
         ApplyOnPlayers:SetValue(GetConVar("enable_celshading_on_players"):GetInt())
         function ApplyOnPlayers:OnChange(val)
@@ -412,7 +412,7 @@ function CST:BuildPanel()
 
     local EnableHalo13ForPlayers = vgui.Create("DCheckBoxLabel", panel1)
         EnableHalo13ForPlayers:SetVisible(false)
-        EnableHalo13ForPlayers:SetPos(105, 175)
+        EnableHalo13ForPlayers:SetPos(120, 163)
         EnableHalo13ForPlayers:SetText("Enable \"GMod 13 Halo\" option in clients menus")
         EnableHalo13ForPlayers:SetValue(GetConVar("enable_gm13_for_players"):GetInt())
         function EnableHalo13ForPlayers:OnChange(val)
@@ -422,13 +422,13 @@ function CST:BuildPanel()
         end
 
     if LocalPlayer():IsAdmin() and not game.SinglePlayer() then
-        ApplyOnYourself:SetPos(155, 95)
+        ApplyOnYourself:SetPos(164, 93)
         ApplyOnPlayers:SetVisible(true)
         EnableHalo13ForPlayers:SetVisible(true)
     end
 
     local ResetButton = vgui.Create("DButton", panel1)
-        ResetButton:SetPos(180, 220)
+        ResetButton:SetPos(182, 218)
         ResetButton:SetText("Reset Options!")
         ResetButton:SetSize(120, 30)
         ResetButton.DoClick = function()
