@@ -1,7 +1,7 @@
 CST = {}
 CST.__index = CST
 
-CST.VERSION = "GitHub 1.2+"
+CST.VERSION = "1.3"
 
 CST.FOLDER = {}
 CST.FOLDER.LUA = "cst/"
