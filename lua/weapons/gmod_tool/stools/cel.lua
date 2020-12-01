@@ -151,6 +151,13 @@ function TOOL:LeftClick(trace)
         t_data = CST.TEXTURES[tonumber(ply:GetInfo("cel_texture"))]
     end
 
+    -- Clear entity
+    if ent.h_data then
+        CST:RemoveColor(ent)
+        CST:RemoveHalo(ent)
+        CST:RemoveMaterial(ent)
+    end
+
     -- Set halo
     CST:SetHalo(ent, h_data)
 
