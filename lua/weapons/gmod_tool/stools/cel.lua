@@ -148,40 +148,40 @@ function TOOL:LeftClick(trace)
         end
 
         c_data = { Color = Color(r, g, b, 255), Mode = mode }
-        t_data = CST.TEXTURES[tonumber(ply:GetInfo("cel_texture"))]
+        t_data = CSTool.TEXTURES[tonumber(ply:GetInfo("cel_texture"))]
     end
 
     -- Clear entity
     if ent.h_data then
-        CST:RemoveColor(ent)
-        CST:RemoveHalo(ent)
-        CST:RemoveMaterial(ent)
+        CSTool:RemoveColor(ent)
+        CSTool:RemoveHalo(ent)
+        CSTool:RemoveMaterial(ent)
     end
 
     -- Set halo
-    CST:SetHalo(ent, h_data)
+    CSTool:SetHalo(ent, h_data)
 
     -- Set color
     if c_data and (table.Count(c_data) > 0) then
-        CST:SetColor(ent, c_data)
+        CSTool:SetColor(ent, c_data)
     else
-        CST:RemoveColor(ent)
+        CSTool:RemoveColor(ent)
     end
 
     -- Set texture
     if t_data then
-        CST:SetMaterial(ent, t_data)
+        CSTool:SetMaterial(ent, t_data)
     else
-        CST:RemoveMaterial(ent)
+        CSTool:RemoveMaterial(ent)
     end
 
     -- Set the undo
     undo.Create("Material")
     undo.SetPlayer(ply)
     undo.AddFunction(function(tab, ent)
-        CST:RemoveColor(ent)
-        CST:RemoveHalo(ent)
-        CST:RemoveMaterial(ent)
+        CSTool:RemoveColor(ent)
+        CSTool:RemoveHalo(ent)
+        CSTool:RemoveMaterial(ent)
     end, ent)
     undo.SetCustomUndoText("Undone Cel Shading")
     undo.Finish()
@@ -203,7 +203,7 @@ function TOOL:RightClick(trace)
     local mat = ent:GetMaterial()
 
     local texture_enabled = 0
-    for k,v in ipairs(CST.TEXTURES) do
+    for k,v in ipairs(CSTool.TEXTURES) do
         if mat == v then
             texture_enabled = 1
 
@@ -264,9 +264,9 @@ function TOOL:Reload(trace)
 
     if CLIENT then return true end
 
-    CST:RemoveColor(ent)
-    CST:RemoveHalo(ent)
-    CST:RemoveMaterial(ent)
+    CSTool:RemoveColor(ent)
+    CSTool:RemoveHalo(ent)
+    CSTool:RemoveMaterial(ent)
 
     return true
 end

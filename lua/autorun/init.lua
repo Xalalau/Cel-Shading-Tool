@@ -1,21 +1,21 @@
-CST = {}
-CST.__index = CST
+CSTool = {}
+CSTool.__index = CSTool
 
-CST.VERSION = "1.3.2"
+CSTool.VERSION = "1.3.2"
 
-CST.FOLDER = {}
-CST.FOLDER.LUA = "cst/"
-CST.FOLDER.SV_MODULES = CST.FOLDER.LUA .. "server/"
-CST.FOLDER.CL_MODULES = CST.FOLDER.LUA .. "client/"
-CST.TEXTURES = {
+CSTool.FOLDER = {}
+CSTool.FOLDER.LUA = "cst/"
+CSTool.FOLDER.SV_MODULES = CSTool.FOLDER.LUA .. "server/"
+CSTool.FOLDER.CL_MODULES = CSTool.FOLDER.LUA .. "client/"
+CSTool.TEXTURES = {
     "models/debug/debugwhite",
     "models/shiny",
     "models/player/shared/ice_player",
 }
 
 if CLIENT then
-    CST.SOBELMAT = Material("pp/sobel")
-    CST.SOBELMAT:SetTexture("$fbtexture", render.GetScreenEffectTexture())
+    CSTool.SOBELMAT = Material("pp/sobel")
+    CSTool.SOBELMAT:SetTexture("$fbtexture", render.GetScreenEffectTexture())
 end
 
 local function includeModules(dir, isClientModule)
@@ -37,6 +37,6 @@ local function includeModules(dir, isClientModule)
 end
 
 if SERVER then
-    includeModules(CST.FOLDER.SV_MODULES)
+    includeModules(CSTool.FOLDER.SV_MODULES)
 end
-includeModules(CST.FOLDER.CL_MODULES, true)
+includeModules(CSTool.FOLDER.CL_MODULES, true)

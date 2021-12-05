@@ -1,15 +1,15 @@
 local haloEntList = {}
 
 net.Receive("cl_SetHalo", function()
-    CST:SetHalo(net.ReadEntity(), net.ReadTable())
+    CSTool:SetHalo(net.ReadEntity(), net.ReadTable())
 end)
 
 net.Receive("cl_RemoveHalo", function()
-    CST:RemoveHalo(net.ReadEntity(), net.ReadString())
+    CSTool:RemoveHalo(net.ReadEntity(), net.ReadString())
 end)
 
 -- Sobel PP effect (light / works / players)
-function CST:SetPPeffect(ent, h_data)
+function CSTool:SetPPeffect(ent, h_data)
     render.ClearStencil()
     render.SetStencilEnable(true)
         render.SetStencilWriteMask(255)
@@ -33,7 +33,7 @@ function CST:SetPPeffect(ent, h_data)
 end
 
 -- GMod 12 halos (light / scaling problems / players)
-function CST:SetGMod12HaloAux(ent, scale, color)
+function CSTool:SetGMod12HaloAux(ent, scale, color)
     local pos = LocalPlayer():EyePos() + LocalPlayer():EyeAngles():Forward() * 10
     local ang = Angle(LocalPlayer():EyeAngles().p + 90, LocalPlayer():EyeAngles().y, 0)
 
@@ -61,7 +61,7 @@ function CST:SetGMod12HaloAux(ent, scale, color)
     render.SetStencilEnable(false)
 end
 
-function CST:SetGMod12Halo(ent, h_data)
+function CSTool:SetGMod12Halo(ent, h_data)
     local shake2 = math.Rand(0, h_data.SingleShake == "1" and h_data.Layer1.Shake or h_data.Layer2.Shake)
     local shake1 = h_data.Layers == "1" and (h_data.SingleShake == "1" and shake2 or math.Rand(0, h_data.Layer1.Shake))
     local sizeLayer1 = h_data.Layers and (1 + h_data.Layer1.Size) or 0
@@ -75,7 +75,7 @@ function CST:SetGMod12Halo(ent, h_data)
 end
 
 -- GMod 13 halos (heavy / works / admins)
-function CST:SetGMod13Halo(ent, h_data)
+function CSTool:SetGMod13Halo(ent, h_data)
     local size = h_data.Size * 5 + math.Rand(0, h_data.Shake)
 
     halo.Add(
@@ -96,34 +96,34 @@ local function DrawAux(entTbl)
             local ent, h_data = v[1], v[2]
 
             if not IsValid(ent) or not ent:IsValid() then
-                CST:RemoveHalo(ent, h_data.Mode)
+                CSTool:RemoveHalo(ent, h_data.Mode)
             else
                 if h_data.Mode == "sobel" then
-                    CST:SetPPeffect(ent, h_data)
+                    CSTool:SetPPeffect(ent, h_data)
                 elseif h_data.Mode == "gm12" then
-                    CST:SetGMod12Halo(ent, h_data)
+                    CSTool:SetGMod12Halo(ent, h_data)
                 elseif h_data.Mode == "gm13" then
-                    CST:SetGMod13Halo(ent, h_data)
+                    CSTool:SetGMod13Halo(ent, h_data)
                 end
             end
         end
     end
 end
 
-hook.Add("PostDrawOpaqueRenderables", "CST Halos 1", function()
+hook.Add("PostDrawOpaqueRenderables", "CSTool Halos 1", function()
     DrawAux(haloEntList["sobel"])
     DrawAux(haloEntList["gm12"])
 end)
 
-hook.Add("PreDrawHalos", "CST Halos 2", function()
+hook.Add("PreDrawHalos", "CSTool Halos 2", function()
     DrawAux(haloEntList["gm13"])
 end)
 
-function CST:RemoveHalo(ent, mode)
+function CSTool:RemoveHalo(ent, mode)
     haloEntList[mode][ent:EntIndex()] = nil
 end
 
-function CST:SetHalo(ent, h_data)
+function CSTool:SetHalo(ent, h_data)
     if not haloEntList[h_data.Mode] then
         haloEntList[h_data.Mode] = {}
     end

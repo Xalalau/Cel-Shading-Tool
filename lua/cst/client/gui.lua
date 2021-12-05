@@ -1,6 +1,6 @@
 local Frame
 
-function CST:BuildPanel()
+function CSTool:BuildPanel()
     -- --------
     -- WINDOW:
     -- --------
@@ -55,9 +55,9 @@ function CST:BuildPanel()
     local TextureType = vgui.Create("DComboBox", panel3)
         TextureType:SetPos(10, 57)
         TextureType:SetSize(190, 25)
-        TextureType:SetValue(CST.TEXTURES[GetConVar("cel_texture"):GetInt()])
-        for k,v in ipairs(CST.TEXTURES) do
-            TextureType:AddChoice(CST.TEXTURES[k], k)
+        TextureType:SetValue(CSTool.TEXTURES[GetConVar("cel_texture"):GetInt()])
+        for k,v in ipairs(CSTool.TEXTURES) do
+            TextureType:AddChoice(CSTool.TEXTURES[k], k)
         end
         TextureType.OnSelect = function(panel, index, value)
             RunConsoleCommand("cel_texture", tostring(index))
@@ -479,7 +479,7 @@ function CST:BuildPanel()
                     -- Halo13ThroughWalls:
                     Halo13ThroughWalls:SetValue(GetConVar("cel_h_13_throughwalls"):GetInt())
                     -- TextureType:
-                    TextureType:ChooseOption(CST.TEXTURES[1], 1)
+                    TextureType:ChooseOption(CSTool.TEXTURES[1], 1)
                     -- TextureColor:
                     r = GetConVar("cel_colour_r"):GetInt()
                     g = GetConVar("cel_colour_g"):GetInt()
@@ -495,8 +495,8 @@ function CST:BuildPanel()
     local ToolVersion = vgui.Create("DLabel", panel1)
         ToolVersion:SetPos(445, 245)
         ToolVersion:SetSize(45, 25)
-        ToolVersion:SetText("v" .. CST.VERSION)
+        ToolVersion:SetText("v" .. CSTool.VERSION)
 
 end
 
-concommand.Add("cel_menu", CST.BuildPanel)
+concommand.Add("cel_menu", CSTool.BuildPanel)

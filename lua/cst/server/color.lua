@@ -1,4 +1,4 @@
-function CST:SetColor(ent, c_data)
+function CSTool:SetColor(ent, c_data)
     ent:SetNWBool("Cel_Color", true)
 
     if c_data.Mode == "gm12" then
@@ -14,7 +14,7 @@ function CST:SetColor(ent, c_data)
 end
 duplicator.RegisterEntityModifier("Cel_ColorDup", SetColor)
 
-function CST:RemoveColor(ent)
+function CSTool:RemoveColor(ent)
     if not (ent and IsValid(ent) and ent:IsValid()) then return end
     if not ent:GetNWBool("Cel_Color") then return end
 

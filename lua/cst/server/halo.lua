@@ -1,7 +1,7 @@
 util.AddNetworkString("cl_SetHalo")
 util.AddNetworkString("cl_RemoveHalo")
 
-function CST:SetHalo(ent, h_data)
+function CSTool:SetHalo(ent, h_data)
     ent:SetNWString("Cel_Halo", h_data.Mode)
 
     net.Start("cl_SetHalo")
@@ -13,9 +13,9 @@ function CST:SetHalo(ent, h_data)
 
     duplicator.StoreEntityModifier(ent, "Cel_HaloDup", h_data)
 end
-duplicator.RegisterEntityModifier("Cel_HaloDup", CST.SetHalo)
+duplicator.RegisterEntityModifier("Cel_HaloDup", CSTool.SetHalo)
 
-function CST:RemoveHalo(ent)
+function CSTool:RemoveHalo(ent)
     if not (ent and IsValid(ent) and ent:IsValid()) then return end
     if not ent.h_data then return end
 

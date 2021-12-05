@@ -1,4 +1,4 @@
-function CST:SetMaterial(ent, t_data)
+function CSTool:SetMaterial(ent, t_data)
     ent:SetMaterial(t_data)
     ent:SetNWBool("Cel_Material", true)
 
@@ -6,7 +6,7 @@ function CST:SetMaterial(ent, t_data)
 end
 duplicator.RegisterEntityModifier("Cel_MaterialDup", SetMaterial)
 
-function CST:RemoveMaterial(ent)
+function CSTool:RemoveMaterial(ent)
     if not (ent and IsValid(ent) and ent:IsValid()) then return end
     if not ent:GetNWBool("Cel_Material") then return end
 
